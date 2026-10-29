@@ -1,0 +1,856 @@
+{
+  "source_file": "CalmWorks1.rbxl",
+  "source_sha256": "37637d1e7965c36b2cbc8ea4b508462cac0a668a244826cc4730804ee1894889",
+  "place_version": 0,
+  "classes": 144,
+  "instances": 6798,
+  "script_count": 100,
+  "classes_by_type": {
+    "Animation": 18,
+    "Animator": 23,
+    "AssetService": 1,
+    "Atmosphere": 1,
+    "Attachment": 845,
+    "AvatarAbilityRules": 1,
+    "AvatarAccessoryRules": 1,
+    "AvatarAnimationRules": 1,
+    "AvatarBodyRules": 1,
+    "AvatarClothingRules": 1,
+    "AvatarCollisionRules": 1,
+    "AvatarRules": 1,
+    "AvatarSettings": 1,
+    "Beam": 1,
+    "BillboardGui": 179,
+    "BindableEvent": 2,
+    "BindableFunction": 3,
+    "BlockMesh": 1,
+    "BloomEffect": 1,
+    "BlurEffect": 1,
+    "BodyColors": 51,
+    "BodyGyro": 2,
+    "BodyPartDescription": 258,
+    "BodyPosition": 1,
+    "BubbleChatConfiguration": 1,
+    "CFrameValue": 1,
+    "CSGDictionaryService": 1,
+    "Camera": 1,
+    "CanvasGroup": 1,
+    "ChannelTabsConfiguration": 1,
+    "Chat": 1,
+    "ChatInputBarConfiguration": 1,
+    "ChatWindowConfiguration": 1,
+    "CollectionService": 1,
+    "Configuration": 10,
+    "ConfigureServerService": 1,
+    "ContextActionService": 1,
+    "CookiesService": 1,
+    "DataStoreService": 1,
+    "Debris": 1,
+    "Decal": 68,
+    "DepthOfFieldEffect": 1,
+    "Folder": 127,
+    "Frame": 863,
+    "GamePassService": 1,
+    "GuidRegistryService": 1,
+    "Hat": 22,
+    "Highlight": 1,
+    "HttpService": 1,
+    "Humanoid": 52,
+    "HumanoidDescription": 43,
+    "ImageButton": 1,
+    "ImageLabel": 2,
+    "InsertService": 1,
+    "Instance": 1,
+    "Lighting": 1,
+    "LocalScript": 16,
+    "LocalizationService": 1,
+    "LodDataService": 1,
+    "LuaWebService": 1,
+    "MaterialService": 1,
+    "MeshPart": 5,
+    "Model": 390,
+    "ModuleScript": 68,
+    "Motor6D": 300,
+    "NonReplicatedCSGDictionaryService": 1,
+    "NumberValue": 5,
+    "ObjectValue": 71,
+    "Packages": 1,
+    "Pants": 23,
+    "Part": 1357,
+    "ParticleEmitter": 2,
+    "PathfindingModifier": 97,
+    "PermissionsService": 1,
+    "PhysicsService": 1,
+    "PlayerEmulatorService": 1,
+    "Players": 1,
+    "PointLight": 14,
+    "ProximityPrompt": 127,
+    "ProximityPromptService": 1,
+    "RemoteEvent": 14,
+    "RemoteFunction": 6,
+    "ReplicatedFirst": 1,
+    "ReplicatedStorage": 1,
+    "ScreenGui": 5,
+    "Script": 16,
+    "ScriptService": 1,
+    "ScrollingFrame": 13,
+    "Seat": 16,
+    "Selection": 1,
+    "ServerScriptService": 1,
+    "ServerStorage": 1,
+    "ServiceVisibilityService": 1,
+    "Shirt": 23,
+    "Sky": 1,
+    "Snap": 3,
+    "Sound": 99,
+    "SoundGroup": 1,
+    "SoundService": 1,
+    "SpawnLocation": 1,
+    "SpecialMesh": 108,
+    "StarterCharacterScripts": 1,
+    "StarterGui": 1,
+    "StarterPack": 1,
+    "StarterPlayer": 1,
+    "StarterPlayerScripts": 1,
+    "StringValue": 338,
+    "StudioData": 1,
+    "SunRaysEffect": 1,
+    "SurfaceAppearance": 1,
+    "SurfaceGui": 6,
+    "Teams": 1,
+    "TeleportService": 1,
+    "Terrain": 1,
+    "TestService": 1,
+    "TextBox": 2,
+    "TextButton": 45,
+    "TextChatService": 1,
+    "TextGenerator": 5,
+    "TextLabel": 411,
+    "Texture": 1,
+    "TimerService": 1,
+    "TouchInputService": 1,
+    "TweenService": 1,
+    "UGCAvatarService": 1,
+    "UIAspectRatioConstraint": 31,
+    "UICorner": 315,
+    "UIGradient": 1,
+    "UIListLayout": 5,
+    "UIPadding": 19,
+    "UIScale": 46,
+    "UISizeConstraint": 4,
+    "UIStroke": 44,
+    "UnionOperation": 35,
+    "VRService": 1,
+    "Vector3Value": 5,
+    "VehicleSeat": 1,
+    "VideoCaptureService": 1,
+    "VideoService": 1,
+    "VoiceChatService": 1,
+    "WedgePart": 4,
+    "Weld": 45,
+    "WeldConstraint": 6,
+    "Workspace": 1
+  },
+  "scripts": [
+    {
+      "path": "ReplicatedFirst/LoadingScreen.client.luau",
+      "class": "LocalScript",
+      "bytes": 2479,
+      "lines": 66,
+      "sha256": "b4cbd2f1b75c6d8d689f30fef8134b633b12d83a10a9aa16e6d39c7c4651f6b3"
+    },
+    {
+      "path": "ReplicatedStorage/CalmWorksShared/ActionFeedback.luau",
+      "class": "ModuleScript",
+      "bytes": 1979,
+      "lines": 62,
+      "sha256": "dfe9ceddd72d482e0ec9216fc4331ed6bfc72459d94c9568c5913a4ff0ea6c6c"
+    },
+    {
+      "path": "ReplicatedStorage/CalmWorksShared/AttentionPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 1226,
+      "lines": 44,
+      "sha256": "5ee3680c8a67362245a608a09a08b1503d1dcbd6bef14d47f8b090d786ea424b"
+    },
+    {
+      "path": "ReplicatedStorage/CalmWorksShared/CashFeedbackMath.luau",
+      "class": "ModuleScript",
+      "bytes": 1438,
+      "lines": 45,
+      "sha256": "726a43df173103d81db9d1f1344ddd575fe3468fa3ba3bdfc05248693100789c"
+    },
+    {
+      "path": "ReplicatedStorage/CalmWorksShared/Config.luau",
+      "class": "ModuleScript",
+      "bytes": 5802,
+      "lines": 130,
+      "sha256": "7cfb8b26efc15fce98abdafaac6460ea57264bd64c700b66044ad8819896ff7c"
+    },
+    {
+      "path": "ReplicatedStorage/CalmWorksShared/EditableUI.luau",
+      "class": "ModuleScript",
+      "bytes": 2423,
+      "lines": 85,
+      "sha256": "157a9de228f7b00fad4aedffe5bf12a742fb0a757a065682839e4349c5bb53fa"
+    },
+    {
+      "path": "ReplicatedStorage/CalmWorksShared/NPCPresentationPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 826,
+      "lines": 29,
+      "sha256": "20327c0aed72edd6011637ec7a2c52b0d14b78bbe7767ff92690f99bcca7d82c"
+    },
+    {
+      "path": "ReplicatedStorage/CalmWorksShared/ObjectiveGuidePolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 1374,
+      "lines": 43,
+      "sha256": "e5bdb25b23db1af5f7d5e603bb758d59e51f8d3ffb769a1d45c79d6bd9341ed6"
+    },
+    {
+      "path": "ReplicatedStorage/CalmWorksShared/ProgressCalendar.luau",
+      "class": "ModuleScript",
+      "bytes": 1280,
+      "lines": 45,
+      "sha256": "9ae31f2265a3bd1c113c22865266f47c84c0192d2ce267dbe31609f5866aa324"
+    },
+    {
+      "path": "ReplicatedStorage/CalmWorksShared/ResponsiveUI.luau",
+      "class": "ModuleScript",
+      "bytes": 14051,
+      "lines": 333,
+      "sha256": "c148b0d8d905a8ea56a31188c615e9c14a777375a3dccc531f700980828bcdf8"
+    },
+    {
+      "path": "ReplicatedStorage/CalmWorksShared/ScenarioText.luau",
+      "class": "ModuleScript",
+      "bytes": 800,
+      "lines": 27,
+      "sha256": "878639e9fe06f1c49c9bfb2b5294e15b4aaeb16d01c882d125d2fdd030481387"
+    },
+    {
+      "path": "ReplicatedStorage/CalmWorksShared/UIEntrance.luau",
+      "class": "ModuleScript",
+      "bytes": 7064,
+      "lines": 234,
+      "sha256": "2dd4f633c3a5c6ad5271707cf18c8e427b8f8d9c6fc3cc1bd0140b9ff3d78847"
+    },
+    {
+      "path": "ReplicatedStorage/SoundtrackConfig.luau",
+      "class": "ModuleScript",
+      "bytes": 716,
+      "lines": 22,
+      "sha256": "41d7e776ce6bc9ad78be81fa5ae1f8d883807df327cb260e918d1755b45561e1"
+    },
+    {
+      "path": "ReplicatedStorage/SoundtrackConfig__ref4893.luau",
+      "class": "ModuleScript",
+      "bytes": 716,
+      "lines": 22,
+      "sha256": "41d7e776ce6bc9ad78be81fa5ae1f8d883807df327cb260e918d1755b45561e1"
+    },
+    {
+      "path": "ReplicatedStorage/SoundtrackConfig__ref4894.luau",
+      "class": "ModuleScript",
+      "bytes": 716,
+      "lines": 22,
+      "sha256": "41d7e776ce6bc9ad78be81fa5ae1f8d883807df327cb260e918d1755b45561e1"
+    },
+    {
+      "path": "ServerScriptService/CalmWorksServer.server.luau",
+      "class": "Script",
+      "bytes": 123357,
+      "lines": 3222,
+      "sha256": "5307c6e42b46ed839566ae6a362e5fd699901a09177d4f5213d9d3da6c364270"
+    },
+    {
+      "path": "ServerScriptService/CalmWorksSupportServer.server.luau",
+      "class": "Script",
+      "bytes": 15105,
+      "lines": 421,
+      "sha256": "9489f1adc7e78c65021b69fab89384a44ac1467fbc5f9b49d184085314b590c6"
+    },
+    {
+      "path": "ServerStorage/AdaptiveSkills.luau",
+      "class": "ModuleScript",
+      "bytes": 9653,
+      "lines": 265,
+      "sha256": "a942ef59ff5f8aa3bd5fca410b08feacae76316c752da3cc1dc4f0d6b63ee698"
+    },
+    {
+      "path": "ServerStorage/BusinessExpansion.luau",
+      "class": "ModuleScript",
+      "bytes": 13755,
+      "lines": 326,
+      "sha256": "6ae26544bedc43411bcc71431e63caac83a77afdd61b0d98cae6069fdd85b0fa"
+    },
+    {
+      "path": "ServerStorage/BusinessRates.luau",
+      "class": "ModuleScript",
+      "bytes": 1946,
+      "lines": 53,
+      "sha256": "c55992b73a9ec5dac83d586dcd327b77047222c70102e0d12182f27a73ba0dd2"
+    },
+    {
+      "path": "ServerStorage/CeremonyPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 1517,
+      "lines": 41,
+      "sha256": "d794072180179be8cef78e4f3689b3c1ea4bcca50bab4826678f47115b4536dc"
+    },
+    {
+      "path": "ServerStorage/CeremonyService.luau",
+      "class": "ModuleScript",
+      "bytes": 13913,
+      "lines": 331,
+      "sha256": "046dfe437759eba9e0fe97de5dc82c7994db1756cd979d2e92576bb6a96da0aa"
+    },
+    {
+      "path": "ServerStorage/CustomerBehavior.luau",
+      "class": "ModuleScript",
+      "bytes": 15306,
+      "lines": 403,
+      "sha256": "4e906ed436e5d1b89dc89b8e5a608ae95165d2eeb6a16dc22512d39b269706f8"
+    },
+    {
+      "path": "ServerStorage/CustomerBehaviorDefinitions.luau",
+      "class": "ModuleScript",
+      "bytes": 13397,
+      "lines": 374,
+      "sha256": "f10ab6b63eefd3b496cff290bd71854d1917f5f5ca578343378d2918af3e89e6"
+    },
+    {
+      "path": "ServerStorage/CustomerCounters.luau",
+      "class": "ModuleScript",
+      "bytes": 14490,
+      "lines": 355,
+      "sha256": "8ebe5f4f1bd461a28a73959c8b4bddd21b3443f4edf4abc8bd73dfefea2f6e6a"
+    },
+    {
+      "path": "ServerStorage/CustomerNavigation.luau",
+      "class": "ModuleScript",
+      "bytes": 3828,
+      "lines": 118,
+      "sha256": "d1e877ae16ddc71e838b5f22573224fdfbeb1d107ec5b444be9bc0b8db588d50"
+    },
+    {
+      "path": "ServerStorage/CustomerNoticePolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 1110,
+      "lines": 37,
+      "sha256": "fcc9151d37fd40e8724953d3f9f7020fb216fd722c111f7f990072a534f7836e"
+    },
+    {
+      "path": "ServerStorage/CustomerRouting.luau",
+      "class": "ModuleScript",
+      "bytes": 720,
+      "lines": 30,
+      "sha256": "44d85c49582dc3e0847dbb8e7572ad308e58b7b242752571c467b602ddcbb29b"
+    },
+    {
+      "path": "ServerStorage/CustomerSpawnSchedule.luau",
+      "class": "ModuleScript",
+      "bytes": 4751,
+      "lines": 121,
+      "sha256": "bc0bac2501356a59ef2d9e29b9d3676aea29b27340a1e3d0caa1952076116d7c"
+    },
+    {
+      "path": "ServerStorage/CustomerValues.luau",
+      "class": "ModuleScript",
+      "bytes": 3706,
+      "lines": 112,
+      "sha256": "d19db569f089a60fd8e8d786208c82fe8565760860859cfaf71bf82cba079b30"
+    },
+    {
+      "path": "ServerStorage/DashboardPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 4315,
+      "lines": 117,
+      "sha256": "68ef33445a6b1160b273a857caff681418e4d03e130c8483c49aeecd6850dc50"
+    },
+    {
+      "path": "ServerStorage/DashboardScenarios.luau",
+      "class": "ModuleScript",
+      "bytes": 5020,
+      "lines": 140,
+      "sha256": "4510639f4fbf1e950185964625c264e4e974ea136e0f8fbf5a320e5a55b68f42"
+    },
+    {
+      "path": "ServerStorage/DashboardService.luau",
+      "class": "ModuleScript",
+      "bytes": 21164,
+      "lines": 553,
+      "sha256": "bc0b4777bf094832f738db1ea6645f2b4ea6945aa208b705484a0536d8ddf620"
+    },
+    {
+      "path": "ServerStorage/DialogueGenerator.luau",
+      "class": "ModuleScript",
+      "bytes": 18780,
+      "lines": 543,
+      "sha256": "1836bc8061ef61d0315d10676df4370503d80607cc378f7ebe9312df670901ee"
+    },
+    {
+      "path": "ServerStorage/EpicCowCar/CarScript.server.luau",
+      "class": "Script",
+      "bytes": 3943,
+      "lines": 119,
+      "sha256": "96835f4d3d6e229cfb806d386290f720094354405ae3435ce65a9f3ce7bdf6ba"
+    },
+    {
+      "path": "ServerStorage/EpicCowCar/CarScript/AutoDestroy.server.luau",
+      "class": "Script",
+      "bytes": 32,
+      "lines": 3,
+      "sha256": "675e645f292a0596d19aac39d7bca3e4e02542f83f070ee4290e9c965d86f11f"
+    },
+    {
+      "path": "ServerStorage/EpicCowCar/CarScript/LocalCarScript.client.luau",
+      "class": "LocalScript",
+      "bytes": 7152,
+      "lines": 193,
+      "sha256": "449593c71b380331753d4887418cae28882b543b003d03dcf22392a67545f152"
+    },
+    {
+      "path": "ServerStorage/EpicCowCar/CarScript/RaycastModule.luau",
+      "class": "ModuleScript",
+      "bytes": 717,
+      "lines": 27,
+      "sha256": "2de51776c5d911ba27281addf2c45452d5fb7d751879b2d86597f41f83a7e9e2"
+    },
+    {
+      "path": "ServerStorage/EpicCowCar/Chassis/Flip Script.server.luau",
+      "class": "Script",
+      "bytes": 337,
+      "lines": 12,
+      "sha256": "f8ab3e0424430cc10617d3d232c74a25717eab437b85d5fc0a3c73acaba45ab9"
+    },
+    {
+      "path": "ServerStorage/EpicCowCar/CowMesh/RandomSongs.server.luau",
+      "class": "Script",
+      "bytes": 261,
+      "lines": 13,
+      "sha256": "5740fe44769a6a2960be6720c113ddf288290144a71f48b216ebda7841219f9d"
+    },
+    {
+      "path": "ServerStorage/EpicCowCar/Humanoid/Dead.server.luau",
+      "class": "Script",
+      "bytes": 214,
+      "lines": 11,
+      "sha256": "2bb4e9f6beec3cf8536f05348bed81026a01e6bad86d27473afb7bfc091e498d"
+    },
+    {
+      "path": "ServerStorage/EpicCowCar/Humanoid/Hurt.server.luau",
+      "class": "Script",
+      "bytes": 223,
+      "lines": 7,
+      "sha256": "fb184710aafb70146e31ca84d4e8b34c2f44a8cc1ebb313d4c341ecd141389bd"
+    },
+    {
+      "path": "ServerStorage/FRQFeedbackPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 2102,
+      "lines": 68,
+      "sha256": "af379988fd97bb09ac8552cd4664816e85838ecd0dbf6d53d139323a7ea67961"
+    },
+    {
+      "path": "ServerStorage/FRQGradePolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 1449,
+      "lines": 48,
+      "sha256": "547401418a87d5017189371d57b839d90546d676bd50384e4b2e299b79db6a12"
+    },
+    {
+      "path": "ServerStorage/FRQGrader.luau",
+      "class": "ModuleScript",
+      "bytes": 9205,
+      "lines": 233,
+      "sha256": "5543a3c1a751fc40219b6e7374d463b2836e03a0e15e873e8b5fc82d2a40a394"
+    },
+    {
+      "path": "ServerStorage/FRQGraderSystemPrompt.luau",
+      "class": "ModuleScript",
+      "bytes": 7345,
+      "lines": 30,
+      "sha256": "6ffa81860277a563acc2130c586e0e636a94f8744064a66cfb5aa7919708609f"
+    },
+    {
+      "path": "ServerStorage/FRQHelpContext.luau",
+      "class": "ModuleScript",
+      "bytes": 2181,
+      "lines": 57,
+      "sha256": "3e813e955f6cba6236d578dbd80b799e14411e5e17f4809629485b75d68fa7ea"
+    },
+    {
+      "path": "ServerStorage/MentorInteraction.luau",
+      "class": "ModuleScript",
+      "bytes": 1954,
+      "lines": 51,
+      "sha256": "f15643526d46fab85a439e33c70522169f3dc00a6d86d9f095e671ed018efe22"
+    },
+    {
+      "path": "ServerStorage/MilestoneProgress.luau",
+      "class": "ModuleScript",
+      "bytes": 1318,
+      "lines": 48,
+      "sha256": "9a1de147b49dd51dd2c90f599fb1251eb6f550e2b12d31b85ac4446bc67fca21"
+    },
+    {
+      "path": "ServerStorage/NPCCollision.luau",
+      "class": "ModuleScript",
+      "bytes": 1768,
+      "lines": 54,
+      "sha256": "d69e260a1e6f13dbf346c9a1c5b4f06e8f611eedca7735d3ade00c3b3ef5e98f"
+    },
+    {
+      "path": "ServerStorage/PersonalConsultationPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 1290,
+      "lines": 38,
+      "sha256": "3790eeb0b5e27dda441895853f898364ed483ab0c86cbe3f5b593d625a0f8f04"
+    },
+    {
+      "path": "ServerStorage/PlayerHelpPacing.luau",
+      "class": "ModuleScript",
+      "bytes": 2522,
+      "lines": 83,
+      "sha256": "eea4bdaad69835c3b50b043a2680042a5ea3ce0480e0a8d9d00bd3cc4c711008"
+    },
+    {
+      "path": "ServerStorage/PracticeModePolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 4972,
+      "lines": 143,
+      "sha256": "162afc7c3812757410f5e0bbf86ebd7b0aa6b595eae9e0f859afd1fad276b4df"
+    },
+    {
+      "path": "ServerStorage/PracticeRecommendations.luau",
+      "class": "ModuleScript",
+      "bytes": 8094,
+      "lines": 208,
+      "sha256": "b49afc8c92fcb68517447aab6f595f10e48aa0a0cca1940807db80b3c9f297e4"
+    },
+    {
+      "path": "ServerStorage/PrivateSeating.luau",
+      "class": "ModuleScript",
+      "bytes": 3446,
+      "lines": 102,
+      "sha256": "52ec06ac39c7ae595b553d092b0814fa293d758b850d5fc913062caff9b3499d"
+    },
+    {
+      "path": "ServerStorage/PrivateSessionPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 1598,
+      "lines": 45,
+      "sha256": "17f7f1b06ac3290730d1aa5d7fa16329ba6a84d71db78d44a96c61fd4b51c205"
+    },
+    {
+      "path": "ServerStorage/PrivateSessions.luau",
+      "class": "ModuleScript",
+      "bytes": 11752,
+      "lines": 311,
+      "sha256": "4bd9ad5ac17e74c7fc3e46f30bf0196303115814be43ae5ddc770fd90a3a1fe1"
+    },
+    {
+      "path": "ServerStorage/ProgressHistory.luau",
+      "class": "ModuleScript",
+      "bytes": 6741,
+      "lines": 188,
+      "sha256": "45934ce6ac3b0477268744e628500b6bd5b8f992cd2226debbb4740c7f6771b2"
+    },
+    {
+      "path": "ServerStorage/ScenarioAIPrompts.luau",
+      "class": "ModuleScript",
+      "bytes": 10241,
+      "lines": 52,
+      "sha256": "7b7b9265ad1c7e531b2b67be37b598e8fe9f52184c591714e905405ae376ae47"
+    },
+    {
+      "path": "ServerStorage/ScenarioAISchema.luau",
+      "class": "ModuleScript",
+      "bytes": 2318,
+      "lines": 71,
+      "sha256": "c41e87163298f583e3177fadea028e775a5e0ab4600bad3462273d425ca9f78f"
+    },
+    {
+      "path": "ServerStorage/ScenarioAIService.luau",
+      "class": "ModuleScript",
+      "bytes": 17677,
+      "lines": 389,
+      "sha256": "71bdf4788a68f0190fba2f5cdec501e5616c8ca61f16424e216f48376701e514"
+    },
+    {
+      "path": "ServerStorage/ScenarioAIValidator.luau",
+      "class": "ModuleScript",
+      "bytes": 11162,
+      "lines": 335,
+      "sha256": "e5c43a594a6f4489720a523e9ff7172d1b94ccb1d47e89a9e76f992c95a72bba"
+    },
+    {
+      "path": "ServerStorage/ScenarioCustomerProfiles.luau",
+      "class": "ModuleScript",
+      "bytes": 7655,
+      "lines": 218,
+      "sha256": "f9022509d3b02b67166cacef370c88ee4d97270e127942787f252b91592a068f"
+    },
+    {
+      "path": "ServerStorage/ScenarioLibrary.luau",
+      "class": "ModuleScript",
+      "bytes": 270956,
+      "lines": 5374,
+      "sha256": "415591606b83df03827898f60821a0a104631f31cdbcee155e24fd609c04e004"
+    },
+    {
+      "path": "ServerStorage/ScenarioLibrary_PreV12_Backup.luau",
+      "class": "ModuleScript",
+      "bytes": 88946,
+      "lines": 2224,
+      "sha256": "628f7a05c258488db4174e85a1abba745190dc94384538ffe55fcc095f2de383"
+    },
+    {
+      "path": "ServerStorage/ScenarioPolishOverrides.luau",
+      "class": "ModuleScript",
+      "bytes": 18017,
+      "lines": 217,
+      "sha256": "367800d44ae436882b975a1609d6be3a52714c74e3d35b4b85195af41d012c52"
+    },
+    {
+      "path": "ServerStorage/StaffConcernPolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 1831,
+      "lines": 55,
+      "sha256": "8217678144cd02d6df6c456b52305d50c640677618e6e6cd7867aeb46724c056"
+    },
+    {
+      "path": "ServerStorage/StaffConsultations.luau",
+      "class": "ModuleScript",
+      "bytes": 11009,
+      "lines": 260,
+      "sha256": "5aa9d82b85a32c80eacef25e16cc2681663e97b9e7b5c54ed36d12fd25d12046"
+    },
+    {
+      "path": "ServerStorage/StaffMoralePolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 5231,
+      "lines": 157,
+      "sha256": "c7cb481dcd63889a89554731252a53acf34e477677464740a0402517b0c14b46"
+    },
+    {
+      "path": "ServerStorage/StaffMoraleService.luau",
+      "class": "ModuleScript",
+      "bytes": 7356,
+      "lines": 192,
+      "sha256": "ed7dce887654cf577652335210cc754ce9fdb91fc527f5136e0532add9a760a7"
+    },
+    {
+      "path": "ServerStorage/StaffRoutePolicy.luau",
+      "class": "ModuleScript",
+      "bytes": 1773,
+      "lines": 64,
+      "sha256": "e6a5d3b7202c8c48216fc0dcafe8c679db0efc6b200298e845a28cb3bdb677bd"
+    },
+    {
+      "path": "ServerStorage/SupportGrounding.luau",
+      "class": "ModuleScript",
+      "bytes": 26045,
+      "lines": 338,
+      "sha256": "1ad79d98e5dd31b5c41b927ad6d96a832183d1fd8e9b2fe8bbfca81054ea3f9a"
+    },
+    {
+      "path": "ServerStorage/SupportMemory.luau",
+      "class": "ModuleScript",
+      "bytes": 742,
+      "lines": 25,
+      "sha256": "01e10baa694c35cdf171b5d1a8129b1c7572f32dc37c4e5a62c838f36b2c76ce"
+    },
+    {
+      "path": "ServerStorage/SupportSystemPrompt.luau",
+      "class": "ModuleScript",
+      "bytes": 20098,
+      "lines": 55,
+      "sha256": "a0b701f366c71605c67fcb01739196c6145f995686b94e4cede141908eb8c4ae"
+    },
+    {
+      "path": "ServerStorage/TycoonProgression.luau",
+      "class": "ModuleScript",
+      "bytes": 4143,
+      "lines": 118,
+      "sha256": "1a3138978db9c9ccd91f9cf6785a26b118c0cd92008afa4fbe0c8bbeb2feee85"
+    },
+    {
+      "path": "ServerStorage/WorkplaceScenarioLibrary.luau",
+      "class": "ModuleScript",
+      "bytes": 21516,
+      "lines": 433,
+      "sha256": "1af7e87f23a075fe583af1bcf6ed252c77d8a1d33ab61aba6dd5f75f93d93347"
+    },
+    {
+      "path": "StarterGui/CalmWorksCeremonyUI/CeremonyClient.client.luau",
+      "class": "LocalScript",
+      "bytes": 10105,
+      "lines": 281,
+      "sha256": "adafebb59b8a32c63365e1395ee55bd0477e3c4e157fcb7cc6809975a46df902"
+    },
+    {
+      "path": "StarterGui/CalmWorksFullScreenEffects/BusinessVisitClient.client.luau",
+      "class": "LocalScript",
+      "bytes": 3534,
+      "lines": 114,
+      "sha256": "5dd8eafeab4127dd898c46e47ca3409fc943aa2bca13d01da1ccac3818376937"
+    },
+    {
+      "path": "StarterGui/CalmWorksObjectivesUI/ObjectiveClient.client.luau",
+      "class": "LocalScript",
+      "bytes": 20201,
+      "lines": 548,
+      "sha256": "9102f7428bb5c51be8eef71b158709422f1561490a221c7666986c666bd9622c"
+    },
+    {
+      "path": "StarterGui/CalmWorksSupportUI/CalmWorksSupportClient.client.luau",
+      "class": "LocalScript",
+      "bytes": 10362,
+      "lines": 313,
+      "sha256": "e70fe727796e66f4102a338368fdcf11f2a128d6f1945377fc67cacc1540f669"
+    },
+    {
+      "path": "StarterGui/CalmWorksUI/AccuracyClient.client.luau",
+      "class": "LocalScript",
+      "bytes": 12013,
+      "lines": 305,
+      "sha256": "97a3280ffdde44abc0443c59ec11db17d0ee906677a405b9b2a0ee4b9444c062"
+    },
+    {
+      "path": "StarterGui/CalmWorksUI/CalmWorksClient.client.luau",
+      "class": "LocalScript",
+      "bytes": 32965,
+      "lines": 862,
+      "sha256": "c96fe8b48c30ef0c2c2b17233d91c0f5efab8bd4c0741150ef93cdd2be545dca"
+    },
+    {
+      "path": "StarterGui/CalmWorksUI/ConsultationAccessClient.client.luau",
+      "class": "LocalScript",
+      "bytes": 5697,
+      "lines": 159,
+      "sha256": "01eb54b0817725d4549f09dcbc234bef2784b765840e47ea4cce7a45b11dd874"
+    },
+    {
+      "path": "StarterGui/CalmWorksUI/HUD/CashFeedbackClient.client.luau",
+      "class": "LocalScript",
+      "bytes": 9051,
+      "lines": 253,
+      "sha256": "8b15c5d29e8ab5e681510a0428b31f438a4ecca9784f7e2216547dcf8a01a91e"
+    },
+    {
+      "path": "StarterGui/CalmWorksUI/ProgressController.luau",
+      "class": "ModuleScript",
+      "bytes": 11786,
+      "lines": 306,
+      "sha256": "c2e8860ffcb15c3061c1ab71e044fc1b80c6e66da9fcb4e770096f023d2c3150"
+    },
+    {
+      "path": "StarterGui/CalmWorksUI/ResponsiveClient.client.luau",
+      "class": "LocalScript",
+      "bytes": 3742,
+      "lines": 97,
+      "sha256": "ea3e17abb6a1b68d33b95bde5bd9dae3822bdf709cf0070afad4fe2205287f55"
+    },
+    {
+      "path": "StarterGui/CalmWorksUI/SkillsRadarRenderer.luau",
+      "class": "ModuleScript",
+      "bytes": 17556,
+      "lines": 434,
+      "sha256": "1c1c318198d9570be889c3d34415add4d817d4d798a0edab740c53354a1b1bf3"
+    },
+    {
+      "path": "StarterPlayer/StarterPlayerScripts/CalmWorksButtonEffects.client.luau",
+      "class": "LocalScript",
+      "bytes": 7359,
+      "lines": 249,
+      "sha256": "fc4bfd30620dfbd3b0b5acee906d89c77113d023f7e311b908087e223366a1c0"
+    },
+    {
+      "path": "StarterPlayer/StarterPlayerScripts/NPCAttentionClient.client.luau",
+      "class": "LocalScript",
+      "bytes": 3660,
+      "lines": 101,
+      "sha256": "ade595c45fc6ad36bc51fc84faae30ab9ef1eb1d8aa91ba7d71695078b931128"
+    },
+    {
+      "path": "StarterPlayer/StarterPlayerScripts/NPCPresentationClient.client.luau",
+      "class": "LocalScript",
+      "bytes": 11909,
+      "lines": 289,
+      "sha256": "da8600bfcd3fb2a805d6348fda78c4862da0e284f4cfd4d04a8343c248c3280b"
+    },
+    {
+      "path": "StarterPlayer/StarterPlayerScripts/SoundtrackClient.client.luau",
+      "class": "LocalScript",
+      "bytes": 5303,
+      "lines": 168,
+      "sha256": "1071f5bdde0c706c3df625e1616ad061533d1a818972f74b2a9149c7b2a86d91"
+    },
+    {
+      "path": "StarterPlayer/StarterPlayerScripts/UIFocusBlurClient.client.luau",
+      "class": "LocalScript",
+      "bytes": 5657,
+      "lines": 194,
+      "sha256": "544d1ed61a8fb362c471daea34a7765fb2e0a2ac24f73d87983630805df58548"
+    },
+    {
+      "path": "Workspace/CalmWorksTycoon/Building/UpgradePads/BackWallPad/Button/Button/Script.server.luau",
+      "class": "Script",
+      "bytes": 209,
+      "lines": 4,
+      "sha256": "6740954240f5057a5b34245914110d99e77d9e138f42482beb9a2b98c632ce13"
+    },
+    {
+      "path": "Workspace/CalmWorksTycoon/Building/UpgradePads/CounterUpgradePad/Button/Button/Script.server.luau",
+      "class": "Script",
+      "bytes": 209,
+      "lines": 4,
+      "sha256": "6740954240f5057a5b34245914110d99e77d9e138f42482beb9a2b98c632ce13"
+    },
+    {
+      "path": "Workspace/CalmWorksTycoon/Building/UpgradePads/LeftSofasPad/Button/Button/Script.server.luau",
+      "class": "Script",
+      "bytes": 209,
+      "lines": 4,
+      "sha256": "6740954240f5057a5b34245914110d99e77d9e138f42482beb9a2b98c632ce13"
+    },
+    {
+      "path": "Workspace/CalmWorksTycoon/Building/UpgradePads/RightSofasPad/Button/Button/Script.server.luau",
+      "class": "Script",
+      "bytes": 209,
+      "lines": 4,
+      "sha256": "6740954240f5057a5b34245914110d99e77d9e138f42482beb9a2b98c632ce13"
+    },
+    {
+      "path": "Workspace/CalmWorksTycoon/Building/UpgradePads/RoofPad/Button/Button/Script.server.luau",
+      "class": "Script",
+      "bytes": 209,
+      "lines": 4,
+      "sha256": "6740954240f5057a5b34245914110d99e77d9e138f42482beb9a2b98c632ce13"
+    },
+    {
+      "path": "Workspace/CalmWorksTycoon/Building/UpgradePads/SideWallsPad/Button/Button/Script.server.luau",
+      "class": "Script",
+      "bytes": 209,
+      "lines": 4,
+      "sha256": "6740954240f5057a5b34245914110d99e77d9e138f42482beb9a2b98c632ce13"
+    },
+    {
+      "path": "Workspace/CalmWorksTycoon/Building/UpgradePads/WelcomeMatPad/Button/Button/Script.server.luau",
+      "class": "Script",
+      "bytes": 209,
+      "lines": 4,
+      "sha256": "6740954240f5057a5b34245914110d99e77d9e138f42482beb9a2b98c632ce13"
+    },
+    {
+      "path": "Workspace/CalmWorksTycoon/ClaimPad/Button/Button/Script.server.luau",
+      "class": "Script",
+      "bytes": 209,
+      "lines": 4,
+      "sha256": "6740954240f5057a5b34245914110d99e77d9e138f42482beb9a2b98c632ce13"
+    }
+  ]
+}
