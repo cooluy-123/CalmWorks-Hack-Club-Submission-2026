@@ -122,4 +122,4 @@ Potential improvements include structured playtesting, a standardized assessment
 
 ## License and asset attribution
 
-See `LICENSE` for the terms covering original code you have the rights to release. **Do not assume the license covers third-party code, Roblox-hosted assets, music, or Toolbox models.** In particular, verify the origin and permission status of any externally obtained models (including `EpicCowCar`, if imported). Replace or remove assets you are not authorized to redistribute, and document relevant attributions before making the whole place public.
+See `LICENSE` for the terms covering original code you have the rights to release. **Do not assume the license covers third-party code, Roblox-hosted assets, music, or Toolbox models.** In particular, verify the origin and permission status of any externally obtained models. Replace or remove assets you are not authorized to redistribute, and document relevant attributions before making the whole place public.
