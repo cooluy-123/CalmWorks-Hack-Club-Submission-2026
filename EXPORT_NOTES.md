@@ -10,6 +10,14 @@
 - **Security:** An automated check did not detect obvious long-format API tokens or URLs in script source; this is **not** a comprehensive security or personal-data audit.
 - **History:** New Git commits accurately document the repository work from the time committed. Do not backdate or fabricate project history; include genuine older work evidence if available.
 
+## Obtaining and running CalmWorks
+
+- **Download the official, uncopylocked Roblox version:** Open https://www.roblox.com/games/137721325206604/CalmWorks while signed in, use the experience page's **⋯ → Edit in Studio** option, and save a local copy from Roblox Studio using **File → Save to File**. The official live version may be newer than the fixed snapshot included in this GitHub repository.
+- **Run the GitHub export:** Download `game/CalmWorks.rbxl`, then open it using **File → Open from File** in Roblox Studio.
+- **Studio DataStore testing (optional):** To test persistent player progress, first publish a separate test experience you own. In Studio's **Experience Settings / Game Settings → Security**, enable **Studio Access to API Services**, then set `Config.SaveInStudio = true` in `ReplicatedStorage/CalmWorksShared/Config`. This is not necessary for ordinary Studio gameplay; keep it `false` outside dedicated save tests.
+- **External HTTP requests:** The exported Luau source uses `HttpService` for JSON and GUID operations, but it does not call outbound HTTP request methods; **Allow HTTP Requests** is not required for this version of CalmWorks. Roblox `TextGenerator` availability/permissions are separate from this setting; curated scenario fallbacks are included.
+- **Limitations:** Some Roblox-hosted assets, permissions, live save data, and native AI capabilities may not transfer to another account.
+
 ## To publish
 
 1. Unzip this archive into a normal folder on your computer (do **not** upload the zip itself as a GitHub source repository).
