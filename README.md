@@ -18,8 +18,6 @@
 - **Progress:** Category statistics, a radar visualization, historical snapshots, and saved business progression.
 - **AI-backed interactions:** Roblox's existing TextGenerator generates candidate scenarios and support responses; structured checks, independent review, filtering, and curated fallbacks reduce unsuitable or inconsistent results.
 
-CalmWorks is an educational practice experience, **not** clinical assessment, therapy, or evidence of improved real-world behavior.
-
 ## Technology
 
 - Roblox Studio and **Luau**
