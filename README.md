@@ -30,12 +30,18 @@ CalmWorks is an educational practice experience, **not** clinical assessment, th
 ## Open and run in Roblox Studio
 
 1. Install **Roblox Studio** and sign in with a Roblox account.
-2. Download this repository, including the full Studio place file at `game/CalmWorks.rbxlx` and the readable Luau source under `src/`.
-3. In Roblox Studio, choose **File → Open from File** and open `game/CalmWorks.rbxlx`.
+2. Download this repository, including the full Studio place file at `game/CalmWorks.rbxl` and the readable Luau source under `src/`.
+3. In Roblox Studio, choose **File → Open from File** and open `game/CalmWorks.rbxl`.
 4. Press **Play** to test the experience. The published Roblox link above is the easiest way to experience the live game.
 5. For a separate test copy with live DataStore persistence, publish to an experience **you own** and configure any required Studio API access. Roblox TextGenerator availability and permissions may depend on your account and experience configuration. Preset scenarios provide a fallback when generation is unavailable.
 
-Some Roblox-hosted assets or services may not transfer automatically to another account. See in-repository asset notes for third-party asset permissions if included.
+Some Roblox-hosted assets or services may not transfer automatically to another account. Some Roblox-hosted assets may require separate permissions. Review and document the source and license of imported assets before redistributing them, including any Toolbox models.
+
+## Exported source code
+
+This repository includes the original binary Studio place file (`game/CalmWorks.rbxl`) and **100 separately extracted Luau files** in `src/` (68 ModuleScripts, 16 Scripts, 16 LocalScripts). The `src/` files are a reviewer-friendly mirror of the embedded scripts, preserving their original Studio parent paths; **the `.rbxl` file is the runnable place**, not the `src/` folder by itself. A machine-generated `SOURCE_INVENTORY.json` lists individual paths, types, source sizes, and hashes.
+
+The export currently contains **6,798 serialized Roblox instances**. Script source line count is approximately **26,145** (including empty lines and any imported/third-party scripts). These counts document this particular place export; they do not independently verify behavior in a separate Studio session.
 
 ## Repository layout
 
@@ -43,8 +49,9 @@ Some Roblox-hosted assets or services may not transfer automatically to another 
 CalmWorks/
 ├── README.md
 ├── LICENSE
+├── SOURCE_INVENTORY.json
 ├── game/
-│   └── CalmWorks.rbxlx           # Full Roblox Studio place export
+│   └── CalmWorks.rbxl           # Full Roblox Studio place export
 ├── src/                        # Readable Luau scripts / modules
 └── assets/
     ├── CalmWorks_Certification_Gameplay.jpg
@@ -52,7 +59,7 @@ CalmWorks/
     └── CalmWorks_Certification_Progress.jpg
 ```
 
-**Repository owner setup:** Make sure all listed files actually exist and that source exports match the playable version before submitting for review. If the layout differs, update this section to match. Do not submit this README in place of the project's actual code and place file.
+**Review note:** This repository mirrors a locally saved Studio file. The publisher should open `game/CalmWorks.rbxl` in Roblox Studio and verify the experience functions before submitting it for independent review; Roblox-hosted assets, permissions, and API features may differ by account.
 
 ## Engineering decisions
 
@@ -68,4 +75,4 @@ Potential improvements include structured playtesting, a standardized assessment
 
 ## License and asset attribution
 
-See `LICENSE` for the terms covering source code you have the rights to release. Third-party and Roblox-owned assets may be subject to separate terms; include credits and redistribution restrictions where applicable.
+See `LICENSE` for the terms covering original code you have the rights to release. **Do not assume the license covers third-party code, Roblox-hosted assets, music, or Toolbox models.** In particular, verify the origin and permission status of any externally obtained models (including `EpicCowCar`, if imported). Replace or remove assets you are not authorized to redistribute, and document relevant attributions before making the whole place public.
