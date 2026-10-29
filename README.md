@@ -79,6 +79,27 @@ The file `game/CalmWorks.rbxl` represents an exported snapshot of the project, w
 
 The original Roblox development history is retained separately from this repository and can be provided as supporting evidence of the project's development process upon request.
 
+### Historical Development Evidence
+
+CalmWorks was originally developed in Roblox Studio before
+this GitHub repository was created.
+
+Roblox's Creator Dashboard records 530 saved versions,
+dating from August 4 to October 28, 2026.
+
+These screenshots document the project's development timeline:
+
+- [Initial development — August 2026](assets/VersionHistory_Initial_August.png)
+- [Intermediate development — August–September 2026](assets/VersionHistory_September.png)
+- [Continued development — October 2026](assets/VersionHistory_October.png)
+- [Final development — October 2026](assets/VersionHistory_Final_October.png)
+
+The complete version history remains accessible through the
+original CalmWorks experience in Roblox Creator Dashboard.
+
+GitHub commits document the later process of exporting,
+organizing, and publishing CalmWorks as open-source software.
+
 ## Future work
 
 Potential improvements include structured playtesting, a standardized assessment separate from adaptive practice, more branching conversations, accessibility refinements, and further automated tests.
