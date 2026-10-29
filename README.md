@@ -67,6 +67,18 @@ The game separates player input from authoritative server checks for answers, pu
 
 The creator designed the original concept, educational scenarios, progression mechanics, adaptive-practice requirements, and overall user experience, and wrote, integrated, modified, and tested Luau gameplay systems. OpenAI Codex assisted with aspects of code development, debugging, refactoring, and GUI foundations; ChatGPT assisted with dialogue, and Gemini Flash was used for artwork. Roblox's TextGenerator is an existing AI service, **not** a new model trained for this project.
 
+## Development and Version History
+
+CalmWorks was originally developed in Roblox Studio for the 2026 Congressional App Challenge. Most of the project's development occurred directly within Roblox Studio before this GitHub repository was created.
+
+As a result, the GitHub commit history primarily documents the process of exporting, organizing, documenting, and publishing the completed project as open source, rather than its entire development timeline.
+
+Roblox maintains a separate version history of saved and published versions of the original CalmWorks experience. These earlier versions can be accessed by the creator through Roblox Studio (**Window → Version History**) or the Roblox Creator Dashboard.
+
+The file `game/CalmWorks.rbxl` represents an exported snapshot of the project, while `src/` provides the extracted Luau scripts for independent code inspection.
+
+The original Roblox development history is retained separately from this repository and can be provided as supporting evidence of the project's development process upon request.
+
 ## Future work
 
 Potential improvements include structured playtesting, a standardized assessment separate from adaptive practice, more branching conversations, accessibility refinements, and further automated tests.
