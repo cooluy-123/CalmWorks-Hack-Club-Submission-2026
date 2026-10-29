@@ -41,20 +41,36 @@ This repository includes the original binary Studio place file (`game/CalmWorks.
 
 The export currently contains **6,798 serialized Roblox instances**. Script source line count is approximately **26,145** (including empty lines and any imported/third-party scripts). These counts document this particular place export; they do not independently verify behavior in a separate Studio session.
 
+
 ## Repository layout
 
 ```text
 CalmWorks/
 ├── README.md
 ├── LICENSE
+├── EXPORT_NOTES.md
 ├── SOURCE_INVENTORY.json
+│
 ├── game/
-│   └── CalmWorks.rbxl           # Full Roblox Studio place export
-├── src/                        # Readable Luau scripts / modules
+│   └── CalmWorks.rbxl
+│
+├── src/
+│   ├── ReplicatedFirst/
+│   ├── ReplicatedStorage/
+│   ├── ServerScriptService/
+│   ├── ServerStorage/
+│   ├── StarterGui/
+│   ├── StarterPlayer/
+│   └── Workspace/
+│
 └── assets/
     ├── CalmWorks_Certification_Gameplay.jpg
     ├── CalmWorks_Certification_Interaction.jpg
-    └── CalmWorks_Certification_Progress.jpg
+    ├── CalmWorks_Certification_Progress.jpg
+    ├── VersionHistory_Initial_August.png
+    ├── VersionHistory_September.png
+    ├── VersionHistory_October.png
+    └── VersionHistory_Final_October.png
 ```
 
 **Review note:** This repository mirrors a locally saved Studio file. The publisher should open `game/CalmWorks.rbxl` in Roblox Studio and verify the experience functions before submitting it for independent review; Roblox-hosted assets, permissions, and API features may differ by account.
