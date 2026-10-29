@@ -1,0 +1,3 @@
+-- Purchase audio is played by ServerScriptService.CalmWorksServer only after
+-- a successful purchase/claim. Keep the editable Sound child here.
+-- Do not bind playback directly to ProximityPrompt.Triggered.
