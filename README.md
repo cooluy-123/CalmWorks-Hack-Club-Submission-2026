@@ -6,7 +6,8 @@
 
 ## Try it
 
-- **Play the published experience:** https://www.roblox.com/games/137721325206604/CalmWorks
+- **Play the official published experience:** https://www.roblox.com/games/137721325206604/CalmWorks
+- **Download an editable copy from Roblox:** CalmWorks has been made **uncopylocked**. Open the [official Roblox experience page](https://www.roblox.com/games/137721325206604/CalmWorks), sign in, select the **⋯** menu near the experience title, and choose **Edit in Studio**. In Roblox Studio, use **File → Save to File** (or **Save As**) to keep a local copy. This copies the publicly available Roblox place; it may be a newer version than the fixed export committed to this repository.
 - **Watch the 2026 CAC demonstration:** https://www.youtube.com/watch?v=z6danf7mGwI
 
 ## Features
@@ -27,13 +28,28 @@
 
 ## Open and run in Roblox Studio
 
-1. Install **Roblox Studio** and sign in with a Roblox account.
-2. Download this repository, including the full Studio place file at `game/CalmWorks.rbxl` and the readable Luau source under `src/`.
-3. In Roblox Studio, choose **File → Open from File** and open `game/CalmWorks.rbxl`.
-4. Press **Play** to test the experience. The published Roblox link above is the easiest way to experience the live game.
-5. For a separate test copy with live DataStore persistence, publish to an experience **you own** and configure any required Studio API access. Roblox TextGenerator availability and permissions may depend on your account and experience configuration. Preset scenarios provide a fallback when generation is unavailable.
+1. Install **Roblox Studio** and sign in with your Roblox account.
+2. Obtain an editable copy in either of these ways:
+   - **From GitHub:** Download this repository and open the complete place export at `game/CalmWorks.rbxl` using **File → Open from File**. The `src/` folder contains a separate, readable mirror of the Luau code.
+   - **Directly from Roblox:** Visit the [official, uncopylocked CalmWorks experience](https://www.roblox.com/games/137721325206604/CalmWorks), select **⋯ → Edit in Studio**, then use **File → Save to File** to download your own local copy.
+3. Press **Play** in Studio to test the game. Playing the [published experience](https://www.roblox.com/games/137721325206604/CalmWorks) is the easiest way to try its currently live version.
 
-Some Roblox-hosted assets or services may not transfer automatically to another account. Some Roblox-hosted assets may require separate permissions. Review and document the source and license of imported assets before redistributing them, including any Toolbox models.
+### Studio API access and data saving
+
+**Ordinary Studio playtesting does not require enabling persistent saving.** CalmWorks deliberately defaults to `Config.SaveInStudio = false` in `ReplicatedStorage/CalmWorksShared/Config`, so Studio sessions do not read or write player DataStores.
+
+To **test persistent saved progress in Studio**:
+
+1. **Publish the downloaded place as a separate test experience you own.** Do not experiment with your original live experience's production save data.
+2. In Roblox Studio, open **File → Experience Settings → Security** (sometimes labeled **Game Settings → Security**) and enable **Enable Studio Access to API Services**. Save the setting.
+3. In the **Config ModuleScript** at `ReplicatedStorage → CalmWorksShared → Config`, temporarily set `Config.SaveInStudio = true`.
+4. Restart the Studio play session and test saving/loading. Restore `Config.SaveInStudio = false` when finished testing.
+
+**Allow HTTP Requests / remote server requests:** This exported version uses `HttpService` for JSON encoding/decoding and generating identifiers, **not for outbound HTTP requests** such as `GetAsync`, `PostAsync`, or `RequestAsync`. Therefore, enabling **Allow HTTP Requests** is **not a prerequisite** for the included gameplay. Turn it on only if you add a feature that genuinely makes external HTTP requests.
+
+**AI services:** The game uses Roblox's native `TextGenerator` objects. AI-powered responses may require Roblox-side availability, eligibility, and permissions for the testing experience; enabling HTTP requests does not itself grant those permissions. The game includes curated scenario fallbacks when AI generation is unavailable.
+
+Some Roblox-hosted assets or services may not transfer automatically to another account, and some assets may require separate permissions. Review the rights to imported assets before redistributing them.
 
 ## Exported source code
 
