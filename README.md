@@ -120,6 +120,28 @@ organizing, and publishing CalmWorks as open-source software.
 
 Potential improvements include structured playtesting, a standardized assessment separate from adaptive practice, more branching conversations, accessibility refinements, and further automated tests.
 
-## License and asset attribution
+## License and Asset Attribution
 
-See `LICENSE` for the terms covering original code you have the rights to release. **Do not assume the license covers third-party code, Roblox-hosted assets, music, or Toolbox models.** In particular, verify the origin and permission status of any externally obtained models. Replace or remove assets you are not authorized to redistribute, and document relevant attributions before making the whole place public.
+CalmWorks is an educational Roblox experience developed for the 2026 Congressional App Challenge using Roblox Studio and Luau.
+
+The project consists of original programming, gameplay systems, educational scenarios, user interfaces, and other content developed by the creator, alongside selected publicly available assets obtained through Roblox Studio's Toolbox and Creator Store.
+
+### Open-Source License
+
+The original source code and other original materials owned by the developer are released under the MIT License. See the [LICENSE](LICENSE) file for the full terms.
+
+The MIT License permits others to use, modify, distribute, and build upon the covered original software, provided that the required copyright and license notices are preserved.
+
+### Third-Party Roblox Assets
+
+Some models, meshes, textures, audio, scripts, and other assets used in CalmWorks may originate from Roblox Studio's public Toolbox or Creator Store.
+
+These third-party assets remain the property of their respective creators and are subject to their original licensing conditions and applicable Roblox terms. They are not independently relicensed under CalmWorks' MIT License.
+
+Public availability through Roblox Studio does not necessarily grant permission for unrestricted redistribution outside the Roblox platform. Any third-party assets included in this repository must be used and redistributed in accordance with their applicable permissions.
+
+### Development and Attribution
+
+CalmWorks' concept, educational design, gameplay integration, and project development were directed by Vrishank Yarra. AI-assisted tools, including OpenAI Codex and ChatGPT, were used during aspects of programming, debugging, and content development. Existing Roblox services and APIs are used for selected AI-powered features.
+
+The project is available for educational exploration, source-code inspection, and further development in accordance with the applicable licenses and permissions.
