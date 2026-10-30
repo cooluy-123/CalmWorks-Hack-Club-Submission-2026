@@ -32,17 +32,42 @@ function Service.New(settings, getSession, findStaff, changed, decayMultiplier, 
         return session.StaffMorale
     end
 
+    local function schedule(saved, entry)
+        local gap = Policy.Setting(settings, "DecayStaggerSeconds", 60, 60, 600)
+        local delay = math.max(saved.DecayNextRemaining or 0, entry.RecoveryRemaining or 0)
+        entry.DecayDelayRemaining = delay
+        saved.DecayNextRemaining = delay + gap
+    end
+
+    local function prepare(saved, entry)
+        if not saved.Initialized or entry.DecayDelayRemaining ~= nil then
+            return false
+        end
+        if entry.Morale < Policy.Setting(settings, "VisitBelow", 50, 1, 100) then
+            -- Existing distressed staff stay eligible; do not hide them behind a new delay.
+            entry.DecayDelayRemaining = 0
+        else
+            schedule(saved, entry)
+        end
+        return true
+    end
+
     local function publish(model, entry, role, active)
-        local morale = active and entry.Morale or 50
+        local morale = active and entry.Morale or 100
         local multiplier = 1
         if active and role ~= "Manager" then
             multiplier = Policy.Multiplier(morale)
         end
         model:SetAttribute("Morale", morale)
+        model:SetAttribute("MoraleDecayStartsIn", math.ceil(entry.DecayDelayRemaining or 0))
         model:SetAttribute("MoraleActive", active)
         model:SetAttribute("MoraleServiceMultiplier", multiplier)
         local gui = model:FindFirstChild("EmployeeMoraleGui", true)
-        local label = gui and gui:FindFirstChild("MoraleLabel")
+        local head = model:FindFirstChild("Head")
+        if gui and gui:IsA("BillboardGui") and head and gui.Adornee ~= head then
+            gui.Adornee = head
+        end
+        local label = gui and gui:FindFirstChild("MoraleLabel", true)
         if label and label:IsA("TextLabel") then
             local format = tostring(gui:GetAttribute("TextFormat") or "Morale: {morale}%")
             label.Text = format:gsub("{morale}", tostring(morale))
@@ -58,14 +83,14 @@ function Service.New(settings, getSession, findStaff, changed, decayMultiplier, 
     end
 
     local function resting(entry)
-        if (entry.RecoveryRemaining or 0) > 0 then
+        if (entry.RecoveryRemaining or 0) > 0 or (entry.DecayDelayRemaining or 0) > 0 then
             return true
         end
-        if settings:GetAttribute("PauseLossWhileWaiting") ~= false
+        if settings:GetAttribute("PauseLossWhileWaiting") == true
             and entry.Morale < Policy.Setting(settings, "VisitBelow", 50, 1, 100) then
             return true
         end
-        return settings:GetAttribute("PauseLossDuringPlayerHelp") ~= false and playerBusy and playerBusy()
+        return settings:GetAttribute("PauseLossDuringPlayerHelp") == true and playerBusy and playerBusy()
     end
 
     function self:Sync(tickDecay)
@@ -79,10 +104,20 @@ function Service.New(settings, getSession, findStaff, changed, decayMultiplier, 
             lastTickAt = now
         end
         local dirty = false
+        if elapsed > 0 and (saved.DecayNextRemaining or 0) > 0 then
+            saved.DecayNextRemaining = math.max(0, saved.DecayNextRemaining - elapsed)
+            dirty = true
+        end
         for _, staff in ipairs(Policy.Roster) do
             local model = findStaff(staff.Area, staff.Role)
             if model then
                 local entry = saved.Entries[staff.Id]
+                if prepare(saved, entry) then
+                    dirty = true
+                elseif elapsed > 0 and (entry.DecayDelayRemaining or 0) > 0 then
+                    entry.DecayDelayRemaining = math.max(0, entry.DecayDelayRemaining - elapsed)
+                    dirty = true
+                end
                 if elapsed > 0 and (entry.RecoveryRemaining or 0) > 0 then
                     entry.RecoveryRemaining = math.max(0, entry.RecoveryRemaining - elapsed)
                     dirty = true
@@ -162,9 +197,13 @@ function Service.New(settings, getSession, findStaff, changed, decayMultiplier, 
         for _, staff in ipairs(Policy.Roster) do
             if staff.Area == area then
                 local model = findStaff(staff.Area, staff.Role)
-                if model and not model:GetAttribute("OnConsultation") and not resting(saved.Entries[staff.Id]) then
-                    local loss = Policy.CustomerLoss(scenario, angry, settings)
-                    dirty = Policy.Lose(saved.Entries[staff.Id], loss, staff.Role, settings) or dirty
+                if model and not model:GetAttribute("OnConsultation") then
+                    local entry = saved.Entries[staff.Id]
+                    dirty = prepare(saved, entry) or dirty
+                    if not resting(entry) then
+                        local loss = Policy.CustomerLoss(scenario, angry, settings)
+                        dirty = Policy.Lose(entry, loss, staff.Role, settings) or dirty
+                    end
                 end
             end
         end
@@ -174,11 +213,27 @@ function Service.New(settings, getSession, findStaff, changed, decayMultiplier, 
         end
     end
 
+    function self:Hire(id)
+        local saved = state()
+        if not saved or not saved.Entries[id] then
+            return
+        end
+        -- Only a new purchase starts fresh; restoring a saved employee keeps their morale.
+        Policy.Recover(saved.Entries[id])
+        if saved.Initialized then
+            schedule(saved, saved.Entries[id])
+        end
+        clocks[id] = os.clock() + interval()
+        changed()
+        self:Sync(false)
+    end
+
     function self:Recover(id)
         local saved = state()
         if saved and saved.Initialized and saved.Entries[id] then
             Policy.Recover(saved.Entries[id])
             saved.Entries[id].RecoveryRemaining = Policy.Setting(settings, "RecoveryGraceSeconds", 120, 0, 600)
+            schedule(saved, saved.Entries[id])
             clocks[id] = os.clock() + interval()
             changed()
             self:Sync(false)

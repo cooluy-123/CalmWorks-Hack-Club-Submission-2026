@@ -302,7 +302,7 @@ function Expansion.New(settings, building, callbacks, index)
                     if sound then
                         sound:Play()
                     end
-                    callbacks.ProgressChanged(who)
+                    callbacks.ProgressChanged(who, id)
                 end)
             )
         end

@@ -76,13 +76,15 @@ function Policy.Clean(saved)
     saved = type(saved) == "table" and saved or {}
     local initialized = saved.Initialized == true
     local entries = type(saved.Entries) == "table" and saved.Entries or {}
-    local result = { Initialized = initialized, Entries = {} }
+    local result = { Initialized = initialized, Entries = {}, DecayNextRemaining = number(saved.DecayNextRemaining, 0, 0, 86400) }
     for _, staff in ipairs(Policy.Roster) do
         local entry = type(entries[staff.Id]) == "table" and entries[staff.Id] or {}
         result.Entries[staff.Id] = {
-            Morale = math.floor(number(entry.Morale, initialized and 100 or 50, 0, 100)),
+            Morale = math.floor(number(entry.Morale, 100, 0, 100)),
             LossRemainder = number(entry.LossRemainder, 0, 0, 0.999999),
             RecoveryRemaining = number(entry.RecoveryRemaining, 0, 0, 600),
+            DecayDelayRemaining = type(entry.DecayDelayRemaining) == "number"
+                and number(entry.DecayDelayRemaining, 0, 0, 86400) or nil,
         }
     end
     return result
@@ -93,9 +95,12 @@ function Policy.Initialize(state, expansion)
         return false
     end
     state.Initialized = true
+    state.DecayNextRemaining = 0
     for _, entry in pairs(state.Entries) do
         entry.Morale = 100
         entry.LossRemainder = 0
+        entry.RecoveryRemaining = 0
+        entry.DecayDelayRemaining = nil
     end
     return true
 end
@@ -149,6 +154,7 @@ end
 
 function Policy.Recover(entry)
     entry.RecoveryRemaining = 0
+    entry.DecayDelayRemaining = nil
     entry.Morale = 100
     entry.LossRemainder = 0
 end

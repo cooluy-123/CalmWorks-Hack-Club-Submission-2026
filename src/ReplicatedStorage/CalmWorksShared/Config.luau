@@ -90,7 +90,7 @@ Config.SpawnRatePerStar = 1.175
 -- Variety stays within difficulty, practice and safety-compatible cases.
 Config.ScenarioRecentWindow = 12
 Config.CustomerRecentProfileWindow = 6
-Config.SupportChatMemoryRefreshSeconds = 120
+Config.SupportChatMemoryRefreshSeconds = 60
 Config.SupportChatContextMessages = 8
 Config.SupportChatTimelineDays = 14
 
@@ -103,6 +103,8 @@ Config.DataStoreName = "CalmWorksPlayerData_StageRatings_v2"
 Config.SaveInStudio = false
 Config.AutoSaveSeconds = 15
 Config.DataStoreRetries = 3
+Config.DataSessionLeaseSeconds = 120
+Config.DataSessionWaitSeconds = 20
 
 -- Native Roblox TextGenerator support chat. The system prompt itself is
 -- editable on ServerStorage > CalmWorksSupportGenerator.

@@ -11,6 +11,7 @@ local getActiveFRQContext = ServerStorage:WaitForChild("GetActiveFRQContext")
 local getSupportState = ServerStorage:WaitForChild("GetSupportState")
 local Grounding = require(ServerStorage:WaitForChild("SupportGrounding"))
 local SupportMemory = require(ServerStorage:WaitForChild("SupportMemory"))
+local SessionStore = require(ServerStorage:WaitForChild("SessionStore"))
 
 local Config = require(ReplicatedStorage:WaitForChild("CalmWorksShared"):WaitForChild("Config"))
 local generator = ServerStorage:FindFirstChild("CalmWorksSupportGenerator")
@@ -36,6 +37,7 @@ responseEvent.Parent = remotes
 local supportStore = DataStoreService:GetDataStore(Config.SupportChatDataStoreName)
 local dataStoreEnabled = not RunService:IsStudio() or Config.SaveInStudio
 local sessions = {}
+local historyStore = SessionStore.New(supportStore, Config, 1)
 
 local SAFE_FALLBACK = UI.T("Support", "SafeFallback")
 
@@ -82,17 +84,20 @@ end
 local function loadSession(player)
     local session = defaultSession()
     if dataStoreEnabled then
-        local success, data = pcall(function()
-            return supportStore:GetAsync("Player_" .. player.UserId)
+        local lease, data = historyStore:Acquire("Player_" .. player.UserId, function()
+            return player.Parent == Players
         end)
-        if success then
-            session.CanSave = true
-            if type(data) == "table" then
-                session.History = sanitizeHistory(data.History)
-                -- Old opaque AI context is intentionally not restored; displayed chat still saves.
+        if lease then
+            if player.Parent ~= Players then
+                historyStore:Save(lease, nil, true)
+                return
             end
+            session.SaveLease = lease
+            session.CanSave = true
+            session.History = sanitizeHistory(data.History)
+            -- Old opaque AI context is intentionally not restored; displayed chat still saves.
         else
-            warn("CalmWorks support history load failed for " .. player.Name .. ": " .. tostring(data))
+            warn("CalmWorks support history load unavailable for " .. player.Name .. ": " .. tostring(data))
         end
     end
     if player.Parent then
@@ -101,41 +106,56 @@ local function loadSession(player)
     end
 end
 
-local function saveSession(player, forceSave)
+local function saveSession(player, forceSave, release)
     local session = sessions[player]
-    if not session or not session.CanSave or (not forceSave and not session.Dirty) then
+    if not session or not session.CanSave then
         return false
     end
-    if forceSave and session.Saving then
-        local deadline = os.clock() + 10
-        while session.Saving and os.clock() < deadline do
-            task.wait(0.1)
-        end
+    if release then
+        session.ReleaseRequested = true
+    end
+    if session.SaveLease.Released then
+        return true
     end
     if session.Saving then
-        return false
-    end
-    session.Saving = true
-    local history = sanitizeHistory(session.History)
-    local revision = session.Revision
-    local success, errorMessage = pcall(function()
-        supportStore:UpdateAsync("Player_" .. player.UserId, function()
-            return {
-                Version = 1,
-                History = history,
-
-                UpdatedAt = os.time(),
-            }
-        end)
-    end)
-    session.Saving = false
-    if success then
-        if session.Revision == revision then
-            session.Dirty = false
+        if forceSave then
+            session.SaveAgain = true
+            local deadline = os.clock() + 20
+            while session.Saving and os.clock() < deadline do
+                task.wait(0.1)
+            end
         end
-    else
-        warn("CalmWorks support history save failed for " .. player.Name .. ": " .. tostring(errorMessage))
+        return session.LastSaveOkay == true and not session.Saving
     end
+    if not forceSave and not session.Dirty and not historyStore:NeedsRenewal(session.SaveLease) then
+        return true
+    end
+
+    session.Saving = true
+    local success = false
+    repeat
+        session.SaveAgain = false
+        local revision = session.Revision
+        local result
+        success, result = historyStore:Save(session.SaveLease, {
+            Version = 1,
+            History = sanitizeHistory(session.History),
+            UpdatedAt = os.time(),
+        }, session.ReleaseRequested)
+        session.LastSaveOkay = success
+        if success then
+            if session.Revision == revision then
+                session.Dirty = false
+            end
+        else
+            if result == "Conflict" then
+                session.CanSave = false
+            end
+            warn("CalmWorks support history save unavailable for " .. player.Name .. ": " .. tostring(result))
+        end
+    until not success or session.SaveLease.Released
+        or not (session.SaveAgain or session.ReleaseRequested)
+    session.Saving = false
     return success
 end
 
@@ -194,9 +214,9 @@ local function currentState(player)
     return Grounding.State(player, Config, measurements, upgradeSummary(player))
 end
 
-local function rememberedState(player, session)
-    local interval = math.clamp(tonumber(Config.SupportChatMemoryRefreshSeconds) or 120, 10, 600)
-    return session.Memory:Get(os.clock(), interval, player:GetAttribute("DataLoaded") == true, function()
+local function rememberedState(player, session, refresh)
+    local interval = math.clamp(tonumber(Config.SupportChatMemoryRefreshSeconds) or 60, 10, 600)
+    return session.Memory:Get(os.clock(), refresh and 0 or interval, player:GetAttribute("DataLoaded") == true, function()
         local state = currentState(player)
         state.ProgressRefreshSeconds = interval
         return state
@@ -314,7 +334,7 @@ local function handleSend(player, rawText, frqId, rawDraft)
         Messages = { { Role = "user", Text = filteredUser, Timestamp = os.time() } },
     })
     responseEvent:FireClient(player, { Action = "Status", Message = UI.T("Support", "Thinking") })
-    local state = rememberedState(player, session)
+    local state = rememberedState(player, session, true)
     if not state then
         session.Busy = false
         sendError(player, UI.T("Support", "Loading"))
@@ -390,7 +410,7 @@ for _, player in ipairs(Players:GetPlayers()) do
     task.spawn(loadSession, player)
 end
 Players.PlayerRemoving:Connect(function(player)
-    saveSession(player, true)
+    saveSession(player, true, true)
     sessions[player] = nil
 end)
 
@@ -405,10 +425,10 @@ end)
 game:BindToClose(function()
     local pending = 0
     for player, session in pairs(sessions) do
-        if session.CanSave and session.Dirty then
+        if session.CanSave then
             pending += 1
             task.spawn(function()
-                saveSession(player, true)
+                saveSession(player, true, true)
                 pending -= 1
             end)
         end

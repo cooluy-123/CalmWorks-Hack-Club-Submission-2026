@@ -93,6 +93,7 @@ local pendingFRQNextStage
 local pendingFRQComplete = false
 local hideDashboard
 local busy = false
+local currentAnswerToken
 local currentScenarioToken
 local dashboardComplete = false
 local currentFRQContext
@@ -391,6 +392,7 @@ local function showDialogueStage(data, animate)
     frqDashboardClose.Visible = false
     setConsultationHeader(data.IsDashboard == true)
     currentScenarioToken = data.ContextToken
+    currentAnswerToken = data.AnswerToken
     dashboardComplete = false
     dashboardClose.Visible = data.IsDashboard == true
     if data.IsDashboard then
@@ -706,15 +708,24 @@ submitButton.Activated:Connect(function()
         statusLabel.Text, statusLabel.TextColor3 = UI.T("Dialogue", "Analyzing"), COLORS.Muted
     end
     local submittedToken = currentScenarioToken
+    local submittedAnswerToken = currentAnswerToken
     local submittedId = continuationId
     local ok, result = pcall(function()
-        return submitAnswer:InvokeServer(answer, submittedToken)
+        return submitAnswer:InvokeServer(answer, submittedToken, submittedAnswerToken)
     end)
     if submittedId ~= continuationId or (submittedToken and submittedToken ~= currentScenarioToken) then
         return
     end
+    if ok and type(result) == "table" and type(result.AnswerToken) == "string" then
+        currentAnswerToken = result.AnswerToken
+    end
     submitButton.Text = currentMode == "FRQ" and UI.T("Dialogue", "SubmitFRQ")
         or UI.T("Dialogue", "SubmitMCQ")
+    if ok and result and result.CurrentStage then
+        showDialogueStage(result.CurrentStage, false)
+        statusLabel.Text, statusLabel.TextColor3 = result.Error, COLORS.Muted
+        return
+    end
     if ok and result and result.SwitchToMCQ and result.NextStage then
         ActionFeedback.Error()
         showDialogueStage(result.NextStage, false)

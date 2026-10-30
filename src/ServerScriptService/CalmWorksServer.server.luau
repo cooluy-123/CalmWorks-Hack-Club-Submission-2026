@@ -27,6 +27,7 @@ local PhysicsService = game:GetService("PhysicsService")
 local HttpService = game:GetService("HttpService")
 local FRQHelpContext = require(ServerStorage:WaitForChild("FRQHelpContext"))
 local FRQGradePolicy = require(ServerStorage:WaitForChild("FRQGradePolicy"))
+local AnswerSubmission = require(ServerStorage:WaitForChild("AnswerSubmission"))
 
 local Shared = ReplicatedStorage:WaitForChild("CalmWorksShared")
 local Config = require(Shared:WaitForChild("Config"))
@@ -228,9 +229,13 @@ local function canExecutiveHelp(data, area)
         and executiveAvailable(area)
 end
 
+local function automaticStaffRoom(area)
+    return executiveAvailable(area) and counters:CanAutoClear(area)
+end
+
 local function hasAutomaticStaffRoom(home)
     for _, area in ipairs({"UpperLeft", "UpperRight"}) do
-        if area ~= home and executiveAvailable(area) and counters:CanAccept(area, true) then
+        if area ~= home and automaticStaffRoom(area) and counters:CanAccept(area, true) then
             return true
         end
     end
@@ -329,6 +334,8 @@ local function counselorServiceSeconds(area)
 end
 local dataStore = DataStoreService:GetDataStore(Config.DataStoreName)
 local dataStoreEnabled = not RunService:IsStudio() or Config.SaveInStudio
+local SessionStore = require(ServerStorage:WaitForChild("SessionStore"))
+local playerStore = SessionStore.New(dataStore, Config, 9)
 
 local GIRL_CUSTOMER_NAMES =
     { "Ava", "Chloe", "Emma", "Isabella", "Lily", "Maya", "Mia", "Olivia", "Sophia", "Zoe" }
@@ -570,30 +577,6 @@ local function sanitizePlayerData(rawData)
     return data
 end
 
-local function retryDataStore(operationName, callback)
-    local lastError
-    for attempt = 1, Config.DataStoreRetries do
-        local success, result = pcall(callback)
-        if success then
-            return true, result
-        end
-        lastError = result
-        warn(
-            string.format(
-                "%s failed (attempt %d/%d): %s",
-                operationName,
-                attempt,
-                Config.DataStoreRetries,
-                tostring(result)
-            )
-        )
-        if attempt < Config.DataStoreRetries then
-            task.wait(attempt)
-        end
-    end
-    return false, lastError
-end
-
 local function markDirty(player)
     local session = playerSessions[player]
     if session then
@@ -832,6 +815,10 @@ getSupportState.OnInvoke = function(player)
         Station = record and record.Area or "None",
         Returning = record and record.Returning == true or false,
         ExecutiveAutoHelpEnabled = staffSettings:GetAttribute("ExecutiveAutoHelpEnabled") ~= false,
+        NextDepartureIn = player:GetAttribute("StaffVisitNextDepartureIn") or 0,
+        MinimumSecondsBetweenDepartures = staffSettings:GetAttribute("MinimumSecondsBetweenDepartures"),
+        VisitState = record and record.Model:GetAttribute("ConsultationState") or "None",
+        Status = player:GetAttribute("StaffVisitStatus") or "No staff request",
         ExecutiveHandling = record and customerData[record.Model] ~= nil
             and customerData[record.Model].Serving == true or false,
         RenovationsInstalled = renovationCatalog ~= nil,
@@ -1169,24 +1156,32 @@ local function loadPlayerData(player)
     player:SetAttribute("SaveStatus", "Loading")
     local loadedData = defaultPlayerData()
     local canSave = false
+    local lease
 
     if dataStoreEnabled then
-        local success, result = retryDataStore("Load data for " .. player.Name, function()
-            return dataStore:GetAsync("Player_" .. player.UserId)
+        local result
+        lease, result = playerStore:Acquire("Player_" .. player.UserId, function()
+            return player.Parent == Players
         end)
-        if success then
-            loadedData = sanitizePlayerData(result)
-            canSave = true
-            player:SetAttribute("SaveStatus", "Loaded")
-        else
-            -- Do not overwrite existing cloud data if loading failed.
-            player:SetAttribute("SaveStatus", "Load failed - saving disabled")
+        if not lease then
+            player:SetAttribute("SaveStatus", "Load unavailable - existing progress protected")
+            if player.Parent == Players then
+                player:Kick(UI.T("ServerErrors", "SaveLoadUnavailable"))
+            end
+            return
         end
+        if player.Parent ~= Players then
+            playerStore:Save(lease, nil, true)
+            return
+        end
+        loadedData = sanitizePlayerData(result)
+        canSave = true
+        player:SetAttribute("SaveStatus", "Loaded")
     else
         player:SetAttribute("SaveStatus", "Studio saving disabled")
     end
 
-    if not player.Parent then
+    if player.Parent ~= Players then
         return
     end
     playerSessions[player] = {
@@ -1213,6 +1208,7 @@ local function loadPlayerData(player)
         Dirty = false,
         Revision = 0,
         CanSave = canSave,
+        SaveLease = lease,
         Saving = false,
     }
     createLeaderstats(player, loadedData)
@@ -1267,72 +1263,63 @@ local function makeSaveSnapshot(player, session)
     }
 end
 
-savePlayerData = function(player, forceSave)
+savePlayerData = function(player, forceSave, release)
     local session = playerSessions[player]
     if not session or not session.CanSave then
         return false
     end
-    syncPendingMoney(player)
-    if session.Saving and forceSave then
-        local deadline = os.clock() + 10
-        while session.Saving and os.clock() < deadline do
-            task.wait(0.1)
-        end
+    if release then
+        session.ReleaseRequested = true
     end
-    if session.Saving then
-        return false
-    end
-    if not forceSave and not session.Dirty then
+    if session.SaveLease.Released then
         return true
     end
-    session.Saving = true
-    player:SetAttribute("SaveStatus", "Saving")
-    local snapshot = makeSaveSnapshot(player, session)
-    local savedRevision = session.Revision
-    local success, persisted = retryDataStore("Save data for " .. player.Name, function()
-        return dataStore:UpdateAsync("Player_" .. player.UserId, function(previous)
-            local merged = table.clone(snapshot)
-            if type(previous) ~= "table" or previous.Version ~= 9 then
-                previous = nil
+    if session.Saving then
+        if forceSave then
+            session.SaveAgain = true
+            local deadline = os.clock() + 20
+            while session.Saving and os.clock() < deadline do
+                task.wait(0.1)
             end
-            -- A stale session must never erase a milestone already saved by another session.
-            merged.Milestones = MilestoneProgress.Merge(
-                type(previous) == "table" and previous.Milestones or nil,
-                snapshot.Milestones
-            )
-            merged.ProgressHistory = ProgressHistory.Merge(
-                type(previous) == "table" and previous.ProgressHistory or nil,
-                snapshot.ProgressHistory,
-                CATEGORY_DEFINITIONS,
-                Config,
-                os.time()
-            )
-            return merged
-        end)
-    end)
-    session.Saving = false
-    if success then
-        if type(persisted) == "table" then
-            session.Milestones = MilestoneProgress.Merge(session.Milestones, persisted.Milestones)
-            session.ProgressHistory = ProgressHistory.Merge(
-                session.ProgressHistory,
-                persisted.ProgressHistory,
-                CATEGORY_DEFINITIONS,
-                Config,
-                os.time()
-            )
         end
-        if session.Revision == savedRevision then
-            session.Dirty = false
-        end
-        if player.Parent then
-            player:SetAttribute("SaveStatus", "Saved")
-        end
-    else
-        if player.Parent then
-            player:SetAttribute("SaveStatus", "Save failed - retrying later")
-        end
+        return session.LastSaveOkay == true and not session.Saving
     end
+    if not forceSave and not session.Dirty and not playerStore:NeedsRenewal(session.SaveLease) then
+        return true
+    end
+
+    session.Saving = true
+    local success = false
+    repeat
+        session.SaveAgain = false
+        player:SetAttribute("SaveStatus", "Saving")
+        local snapshot = makeSaveSnapshot(player, session)
+        local savedRevision = session.Revision
+        local persisted
+        success, persisted = playerStore:Save(session.SaveLease, snapshot, session.ReleaseRequested)
+        session.LastSaveOkay = success
+        if success then
+            if session.Revision == savedRevision then
+                session.Dirty = false
+            end
+            if player.Parent == Players then
+                player:SetAttribute("SaveStatus", "Saved")
+            end
+        elseif persisted == "Conflict" then
+            session.CanSave = false
+            player:SetAttribute("SaveStatus", "Session changed - stale save blocked")
+            if player.Parent == Players then
+                player:Kick(UI.T("ServerErrors", "SaveSessionChanged"))
+            end
+        else
+            warn("CalmWorks player save unavailable for " .. player.Name .. ": " .. tostring(persisted))
+            if player.Parent == Players then
+                player:SetAttribute("SaveStatus", "Save failed - retrying later")
+            end
+        end
+    until not success or session.SaveLease.Released
+        or not (session.SaveAgain or session.ReleaseRequested)
+    session.Saving = false
     return success
 end
 
@@ -1368,6 +1355,7 @@ local function makeDialoguePayload(data)
     local stage = scenario.Stages[stageIndex]
     return {
         CustomerName = data.Name,
+        AnswerToken = AnswerSubmission.Token(data),
         IsAIGenerated = scenario.SourceKind == "AI",
         Prompt = stage.Prompt,
         FRQContextId = scenario.Mode == "FRQ" and (data.HelpContextId .. ":" .. stageIndex) or nil,
@@ -2008,20 +1996,27 @@ end
 
 tryStaffVisit = function()
     local session = owner and playerSessions[owner]
-    if
-        not session
-        or session.TycoonProgress.CompletedExpansions < 3
-        or businessVisitor
-        or staffVisits.Active
-        or os.clock() < staffVisits.NextVisitAt
-    then
+    if not session or session.TycoonProgress.CompletedExpansions < 3 then
+        return false
+    end
+    local nextAt = math.max(staffVisits.NextVisitAt, staffVisits.LastDepartureAt
+        + StaffMoralePolicy.Setting(staffSettings, "MinimumSecondsBetweenDepartures", 60, 60, 600))
+    owner:SetAttribute("StaffVisitNextDepartureIn", math.max(0, math.ceil(nextAt - os.clock())))
+    if businessVisitor then
+        owner:SetAttribute("StaffVisitStatus", "Waiting for the Business Man visit")
+        return false
+    elseif staffVisits.Active then
+        owner:SetAttribute("StaffVisitStatus", "A staff consultation is in progress")
+        return false
+    elseif os.clock() < nextAt then
+        owner:SetAttribute("StaffVisitStatus", "Spacing staff departures")
         return false
     end
     local function allowedRoom(home, room)
         if home == room or not counters:CanAccept(room, true) then
             return false
         end
-        return executiveAvailable(room) or allowPlayerRequest("Staff", room)
+        return automaticStaffRoom(room) or allowPlayerRequest("Staff", room)
     end
     local function canVisit(staff)
         if not staffVisits:CanTake(staff) then
@@ -2035,6 +2030,9 @@ tryStaffVisit = function()
     end
     local preferred = staffMorale:Candidate(canVisit)
     if not session.StaffConcerns.Pending and not preferred then
+        local waiting = staffMorale:Candidate()
+        owner:SetAttribute("StaffVisitStatus", waiting and "Waiting for a clear upstairs queue or an available staff member"
+            or "No staff request")
         return false
     end
     local record = staffVisits:Take(session.StaffConcerns, preferred, canVisit)
@@ -2043,7 +2041,7 @@ tryStaffVisit = function()
     end
     -- Prefer a working executive, without cutting ahead of their existing queue.
     local area = counters:ChooseArea("Upper", true, function(room)
-        return record.HomeRoom ~= room and executiveAvailable(room)
+        return record.HomeRoom ~= room and automaticStaffRoom(room)
     end)
     if not area then
         area = counters:ChooseArea("Upper", true, function(room)
@@ -2084,6 +2082,7 @@ tryStaffVisit = function()
         return false
     end
     local model = record.Model
+    owner:SetAttribute("StaffVisitStatus", "Staff travelling to " .. area)
     if not executiveAvailable(area) then
         helpPacing:Requested()
     end
@@ -2561,7 +2560,7 @@ local function finishAnsweredStage(player, data)
     return { Correct = true, Reward = reward, Success = scenario.Feedback, Difficulty = scenario.Difficulty }
 end
 
-submitAnswer.OnServerInvoke = function(player, answer, contextToken)
+submitAnswer.OnServerInvoke = function(player, answer, contextToken, answerToken)
     if dashboard and dashboard:IsActive(player) then
         return dashboard:Submit(player, answer, contextToken)
     end
@@ -2586,6 +2585,15 @@ submitAnswer.OnServerInvoke = function(player, answer, contextToken)
         return { Error = UI.T("ServerErrors", "ThereIsNoActiveQuestion") }
     end
 
+    local status, previous = AnswerSubmission.Check(data, answerToken, answer)
+    if status == "Repeat" then
+        return previous
+    elseif status == "Busy" then
+        return { Error = UI.T("ServerErrors", "YourResponseIsStillBeingGraded") }
+    elseif status ~= "Ready" then
+        return { Error = UI.T("ServerErrors", "AnswerExpired"), CurrentStage = makeDialoguePayload(data) }
+    end
+
     if scenario.Mode == "FRQ" then
         if type(answer) ~= "string" then
             return { Error = UI.T("ServerErrors", "WriteAResponseBeforeSubmitting") }
@@ -2608,6 +2616,7 @@ submitAnswer.OnServerInvoke = function(player, answer, contextToken)
         if now - (data.LastFRQSubmitAt or -math.huge) < Config.FRQGradingCooldownSeconds then
             return { Error = UI.T("ServerErrors", "PleaseWaitAMomentBeforeSubmittingAgain") }
         end
+        AnswerSubmission.Begin(data, answerToken, answer)
         data.Grading, data.LastFRQSubmitAt = true, now
         local okay, grade, gradeError = pcall(FRQGrader.Grade, player, scenario, stageIndex, response)
         data.Grading = false
@@ -2626,12 +2635,12 @@ submitAnswer.OnServerInvoke = function(player, answer, contextToken)
         if not grade then
             -- The existing curated three-choice stage is a safe fallback. No score is recorded.
             scenario.Mode = "MCQ"
-            return {
+            return AnswerSubmission.Finish(data, {
                 SwitchToMCQ = true,
                 NextStage = makeDialoguePayload(data),
                 Error = (gradeError or UI.T("ServerNotices", "GradingFailed"))
                     .. UI.T("ServerNotices", "MCQFallback"),
-            }
+            })
         end
         -- Every valid graded attempt counts, including a corrected retry.
         data.RecordedStages[stageIndex] = true
@@ -2639,23 +2648,24 @@ submitAnswer.OnServerInvoke = function(player, answer, contextToken)
         if not grade.Passed then
             local outcome = grade.Scores.EscalationRisk >= Config.FRQMaximumEscalationRisk and "Risky"
                 or "Mixed"
-            return {
+            return AnswerSubmission.Finish(data, {
                 Correct = false,
                 Mode = "FRQ",
                 Analysis = grade,
                 CustomerReaction = customerReaction(data, outcome),
-            }
+            })
         end
         local reaction = customerReaction(data, "Optimal")
         local result = finishAnsweredStage(player, data)
         result.Mode, result.Analysis = "FRQ", grade
         result.CustomerReaction = reaction
-        return result
+        return AnswerSubmission.Finish(data, result)
     end
 
     if type(answer) ~= "number" or answer % 1 ~= 0 or not stage.Choices[answer] then
         return { Error = UI.T("ServerErrors", "InvalidAnswer") }
     end
+    AnswerSubmission.Begin(data, answerToken, answer)
     local isCorrect = answer == stage.BestIndex
     data.RecordedStages[stageIndex] = true
     recordCategoryAnswer(player, scenario, isCorrect)
@@ -2664,7 +2674,7 @@ submitAnswer.OnServerInvoke = function(player, answer, contextToken)
         if type(specificFeedback) ~= "string" or specificFeedback == "" then
             specificFeedback = scenario.Feedback
         end
-        return {
+        return AnswerSubmission.Finish(data, {
             Correct = false,
             CustomerReaction = customerReaction(
                 data,
@@ -2672,12 +2682,12 @@ submitAnswer.OnServerInvoke = function(player, answer, contextToken)
             ),
             Hint = specificFeedback,
             Outcome = stage.ChoiceOutcomes and stage.ChoiceOutcomes[answer] or "Incorrect",
-        }
+        })
     end
     local reaction = customerReaction(data, "Optimal")
     local result = finishAnsweredStage(player, data)
     result.CustomerReaction = reaction
-    return result
+    return AnswerSubmission.Finish(data, result)
 end
 
 local function findWorkingStaff(area, role)
@@ -2748,6 +2758,7 @@ counters = CustomerCounters.New(customerQueue, customerData, customerPoints, val
             or data.Kind == "Staff"
             or CustomerCounters.RequiresPlayer(data)
             or not isCounterStaffed(area)
+            or counters:HasStaffVisit(area)
         then
             return
         end
@@ -2859,7 +2870,8 @@ for index, settings in ipairs(visitSettings) do
         BusinessTitle = function(player)
             return UI.T("World", "BusinessTitle", player.DisplayName)
         end,
-        ProgressChanged = function(player)
+        ProgressChanged = function(player, id)
+            staffMorale:Hire(id)
             staffMorale:Sync(false)
             markDirty(player)
             checkStageProgress(player)
@@ -3140,7 +3152,7 @@ Players.PlayerRemoving:Connect(function(player)
     ScenarioAI.CancelPlayer(player)
     rollProgressDay(player, os.time())
     captureProgress(player, os.time())
-    savePlayerData(player, true)
+    savePlayerData(player, true, true)
     if player == owner then
         resetTycoon()
     end
@@ -3148,22 +3160,71 @@ Players.PlayerRemoving:Connect(function(player)
     playerSessions[player] = nil
 end)
 
+local periodicWarnings = {}
+local function safePeriodic(name, callback)
+    local okay, reason = pcall(callback)
+    if not okay and os.clock() - (periodicWarnings[name] or -math.huge) >= 30 then
+        periodicWarnings[name] = os.clock()
+        warn("CalmWorks " .. name .. " update failed; retrying: " .. tostring(reason))
+    end
+end
+
+local function checkStaffVisit()
+    local record = staffVisits.Active
+    if not record then
+        return
+    end
+    local model = record.Model
+    local data = customerData[model]
+    local timeout = math.clamp(tonumber(staffSettings:GetAttribute("RouteTimeoutSeconds")) or 120, 30, 300)
+    local overdueReturn = record.Returning and record.ReturnStartedAt
+        and os.clock() - record.ReturnStartedAt > timeout + 10
+    if (not record.Returning and not data) or not model.Parent or overdueReturn then
+        counters:Remove(model)
+        if data then
+            ScenarioAI.Cancel(data.GenerationTicket)
+            customerData[model] = nil
+        end
+        if activeCustomer == model then
+            setActiveCustomer(nil)
+            if owner and owner.Parent == Players then
+                openDialogue:FireClient(owner, {Closed = true})
+            end
+        end
+        staffVisits:Recover(model)
+        counters:Update()
+        warn("CalmWorks: recovered an abandoned staff visit; other staff can continue.")
+    end
+end
+
+-- Staff scheduling must survive an unrelated dashboard, seating or ceremony error.
 task.spawn(function()
     while task.wait(1) do
-        staffMorale:Sync(true)
-        dashboard:Tick()
-        privateSessions:Tick()
-        ceremony:Tick()
+        safePeriodic("morale", function()
+            staffMorale:Sync(true)
+        end)
+        safePeriodic("staff recovery", checkStaffVisit)
+        safePeriodic("staff scheduling", tryStaffVisit)
+    end
+end)
+
+task.spawn(function()
+    while task.wait(1) do
+        safePeriodic("dashboard", function()
+            dashboard:Tick()
+        end)
+        safePeriodic("private sessions", function()
+            privateSessions:Tick()
+        end)
+        safePeriodic("ceremony", function()
+            ceremony:Tick()
+        end)
         if owner then
             for model, data in pairs(customerData) do
                 if data.PendingNotice then
                     sendEventNotice(owner, data.PendingNotice, model)
                 end
             end
-        end
-        local okay, reason = pcall(tryStaffVisit)
-        if not okay then
-            warn("CalmWorks staff scheduling failed: " .. tostring(reason))
         end
         if owner then
             local count = helpContext().Count
@@ -3207,7 +3268,7 @@ game:BindToClose(function()
         if session.CanSave then
             remaining += 1
             task.spawn(function()
-                savePlayerData(player, true)
+                savePlayerData(player, true, true)
                 remaining -= 1
             end)
         end

@@ -4,7 +4,7 @@ local Seating = require(script.Parent.PrivateSeating)
 local Policy = require(script.Parent.StaffMoralePolicy)
 
 function Staff.New(settings, points, findStaff, moraleSettings)
-    local self = { Active = nil, NextVisitAt = 0, RetryAt = {} }
+    local self = { Active = nil, NextVisitAt = 0, LastDepartureAt = -math.huge, RetryAt = {} }
 
     function self:CanTake(staff)
         if os.clock() < (self.RetryAt[staff.Id] or 0) then
@@ -84,11 +84,13 @@ function Staff.New(settings, points, findStaff, moraleSettings)
         elseif record.MoraleDriven then
             delay = Policy.Setting(moraleSettings, "MoraleVisitGapSeconds", 8, 0, 600)
         end
-        self.NextVisitAt = os.clock() + delay
+        local gap = Policy.Setting(settings, "MinimumSecondsBetweenDepartures", 60, 60, 600)
+        self.NextVisitAt = math.max(os.clock() + delay, self.LastDepartureAt + gap)
     end
 
     function self:Take(state, preferred, canVisit)
-        if self.Active or os.clock() < self.NextVisitAt then
+        local gap = Policy.Setting(settings, "MinimumSecondsBetweenDepartures", 60, 60, 600)
+        if self.Active or os.clock() < math.max(self.NextVisitAt, self.LastDepartureAt + gap) then
             return nil
         end
         local last = preferred and 0 or #Policy.Roster - 1
@@ -133,6 +135,8 @@ function Staff.New(settings, points, findStaff, moraleSettings)
                     WalkSpeed = humanoid.WalkSpeed,
                     EvaluateStateMachine = humanoid.EvaluateStateMachine,
                 }
+                self.Active = record
+                self.LastDepartureAt = os.clock()
                 for _, item in ipairs(model:GetDescendants()) do
                     if item:IsA("BasePart") then
                         record.Parts[item] = {
@@ -186,7 +190,6 @@ function Staff.New(settings, points, findStaff, moraleSettings)
                         warn("CalmWorks staff walk animation unavailable: " .. tostring(track))
                     end
                 end
-                self.Active = record
                 state.NextStaff = index % #Policy.Roster + 1
                 model:SetAttribute("OnConsultation", true)
                 model:SetAttribute("ConsultationState", "Travelling")
@@ -204,6 +207,7 @@ function Staff.New(settings, points, findStaff, moraleSettings)
         end
         record.Prompt.Enabled = false
         record.Returning = true
+        record.ReturnStartedAt = os.clock()
         model:SetAttribute("ConsultationState", "Returning")
         task.spawn(function()
             local timeout = math.clamp(tonumber(settings:GetAttribute("RouteTimeoutSeconds")) or 120, 30, 300)
@@ -250,6 +254,7 @@ function Staff.New(settings, points, findStaff, moraleSettings)
             restore(record)
         end
         self.NextVisitAt = 0
+        self.LastDepartureAt = -math.huge
         table.clear(self.RetryAt)
     end
 

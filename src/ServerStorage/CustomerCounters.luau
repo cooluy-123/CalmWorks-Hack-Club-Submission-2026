@@ -53,6 +53,32 @@ function Counters.New(mainQueue, dataMap, points, settings, callbacks)
         return waiting, blocked
     end
 
+    function self:HasStaffVisit(area)
+        for _, model in ipairs(self.Queues[area] or {}) do
+            local data = dataMap[model]
+            if model.Parent and data and data.Kind == "Staff" then
+                return true
+            end
+        end
+        return false
+    end
+
+    function self:CanAutoClear(area)
+        if not callbacks.Staffed(area) then
+            return false
+        end
+        for _, model in ipairs(self.Queues[area] or {}) do
+            local data = dataMap[model]
+            if model.Parent and data then
+                if data.Kind == "BusinessMan" or callbacks.Active() == model
+                    or Counters.RequiresPlayer(data, self:ExecutiveHelp(model, data, area)) then
+                    return false
+                end
+            end
+        end
+        return true
+    end
+
     function self:CanAccept(area, reserved)
         local queue = self.Queues[area]
         if not queue then
@@ -123,10 +149,12 @@ function Counters.New(mainQueue, dataMap, points, settings, callbacks)
         self:SetAttention(model, false)
         model:SetAttribute("AttentionActive", false)
         CollectionService:RemoveTag(model, "CalmWorksHelpVisitor")
-        local queue = self:Queue(model)
-        local index = table.find(queue, model)
-        if index then
-            table.remove(queue, index)
+        -- A missing visitor record must not leave a ghost blocking an upstairs queue.
+        for _, queue in pairs(self.Queues) do
+            local index = table.find(queue, model)
+            if index then
+                table.remove(queue, index)
+            end
         end
     end
 
@@ -210,6 +238,9 @@ function Counters.New(mainQueue, dataMap, points, settings, callbacks)
                         if walk(model, marker.Position, valid) then
                             if valid() then
                                 data.ArrivedAt = os.clock()
+                                if data.Kind == "Staff" then
+                                    model:SetAttribute("ConsultationState", "WaitingInLine")
+                                end
                             end
                         elseif valid() then
                             callbacks.Stuck(model)
@@ -343,9 +374,16 @@ function Counters.New(mainQueue, dataMap, points, settings, callbacks)
     end
 
     task.spawn(function()
+        local warnedAt = -math.huge
         while true do
             task.wait(0.25)
-            self:Tick()
+            local okay, reason = pcall(function()
+                self:Tick()
+            end)
+            if not okay and os.clock() - warnedAt >= 30 then
+                warnedAt = os.clock()
+                warn("CalmWorks counter update failed; retrying: " .. tostring(reason))
+            end
         end
     end)
     return self
