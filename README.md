@@ -7,56 +7,67 @@
 ## Try it
 
 - **Play the official published experience:** https://www.roblox.com/games/137721325206604/CalmWorks
-- **Download an editable copy from Roblox:** CalmWorks has been made **uncopylocked**. Open the [official Roblox experience page](https://www.roblox.com/games/137721325206604/CalmWorks), sign in, select the **⋯** menu near the experience title, and choose **Edit in Studio**. In Roblox Studio, use **File → Save to File** (or **Save As**) to keep a local copy. This copies the publicly available Roblox place; it may be a newer version than the fixed export committed to this repository.
+- **Obtain an editable copy from Roblox:** CalmWorks is **uncopylocked**. Open the [official Roblox experience page](https://www.roblox.com/games/137721325206604/CalmWorks), sign in, open the **⋯** menu, and select **Edit in Studio** where available. In Studio, use **File → Save to File** to save your own local copy. The live Roblox version may differ from the snapshot in this repository.
 - **Watch the 2026 CAC demonstration:** https://www.youtube.com/watch?v=z6danf7mGwI
 
 ## Features
 
-- **Interactive practice:** Three-choice or written responses with constructive, scenario-specific feedback.
+- **Interactive conflict-resolution practice:** Respond to realistic situations using three-choice questions or written answers, with constructive feedback.
 - **Curated cases:** 100 scenarios across 10 categories, including 40 linked multistage conversations (140 dialogue stages total).
-- **Adaptive recommendations:** First-attempt results from a rolling window of up to 50 responses inform category practice. Selection increases attention to weaker areas while preserving variety.
-- **Business simulation:** Employees, managers, customer personalities, workplace concerns, private guidance sessions, online consultations, NPC routing, and four expansions.
-- **Progress:** Category statistics, a radar visualization, historical snapshots, and saved business progression.
-- **AI-backed interactions:** Roblox's existing TextGenerator generates candidate scenarios and support responses; structured checks, independent review, filtering, and curated fallbacks reduce unsuitable or inconsistent results.
+- **Adaptive recommendations:** First-attempt results from a rolling window of up to 50 answers guide weighted category practice, increasing attention to weaker areas while preserving variety.
+- **Business simulation:** Customers with distinct personalities, NPC navigation and queues, employees and managers, workplace concerns, private guidance sessions, online consultations, and **four business expansions**. The fifth and final star is awarded after completing the final expansion's requirements.
+- **Progress tracking:** Category accuracy, a radar visualization, historical snapshots, and saved business progression.
+- **AI-supported interactions:** Roblox's native `TextGenerator` is used for candidate scenarios and support responses. Structural checks, independent review, filtering, and curated fallbacks help maintain consistent behavior when generation is unavailable or unsuitable.
+
+CalmWorks is an educational practice experience, **not** clinical therapy, a diagnostic assessment, or proof of improved real-world behavior.
 
 ## Technology
 
-- Roblox Studio and **Luau**
-- Server-authoritative gameplay, with clients handling UI and user input
-- Roblox PathfindingService, DataStore APIs, and TextGenerator
-- Modular scenario, adaptive-practice, NPC, employee, dashboard, and save systems
+- **Roblox Studio** and **Luau**
+- Server-authoritative gameplay with client-side user interfaces
+- Roblox `PathfindingService`, `DataStoreService`, and native `TextGenerator`
+- Modular scenario, adaptive-practice, employee, NPC, dashboard, and save systems
+- Input validation, asynchronous processing, and save-data compatibility handling
 
 ## Open and run in Roblox Studio
 
-1. Install **Roblox Studio** and sign in with your Roblox account.
-2. Obtain an editable copy in either of these ways:
-   - **From GitHub:** Download this repository and open the complete place export at `game/CalmWorks.rbxl` using **File → Open from File**. The `src/` folder contains a separate, readable mirror of the Luau code.
-   - **Directly from Roblox:** Visit the [official, uncopylocked CalmWorks experience](https://www.roblox.com/games/137721325206604/CalmWorks), select **⋯ → Edit in Studio**, then use **File → Save to File** to download your own local copy.
-3. Press **Play** in Studio to test the game. Playing the [published experience](https://www.roblox.com/games/137721325206604/CalmWorks) is the easiest way to try its currently live version.
+1. Install **Roblox Studio** and sign in with a Roblox account.
+2. Obtain an editable copy using one of two methods:
+   - **From this repository:** Download the repository and open `game/CalmWorks.rbxl` with **File → Open from File**. The `src/` directory is a readable mirror of the embedded Luau code, not a standalone playable project.
+   - **From Roblox directly:** Visit the [official, uncopylocked experience](https://www.roblox.com/games/137721325206604/CalmWorks), choose **⋯ → Edit in Studio** if shown, then select **File → Save to File** to save a local copy.
+3. Press **Play** in Roblox Studio to test the experience. For the currently published version, play the [official Roblox game](https://www.roblox.com/games/137721325206604/CalmWorks).
 
 ### Studio API access and data saving
 
-**Ordinary Studio playtesting does not require enabling persistent saving.** CalmWorks deliberately defaults to `Config.SaveInStudio = false` in `ReplicatedStorage/CalmWorksShared/Config`, so Studio sessions do not read or write player DataStores.
+**Ordinary playtesting in Studio does not require persistent DataStore access.** By default, `Config.SaveInStudio = false` in `ReplicatedStorage → CalmWorksShared → Config`, so Studio sessions do not load or save player DataStore progress.
 
-To **test persistent saved progress in Studio**:
+To **test persistent saving and loading in Studio**:
 
-1. **Publish the downloaded place as a separate test experience you own.** Do not experiment with your original live experience's production save data.
-2. In Roblox Studio, open **File → Experience Settings → Security** (sometimes labeled **Game Settings → Security**) and enable **Enable Studio Access to API Services**. Save the setting.
-3. In the **Config ModuleScript** at `ReplicatedStorage → CalmWorksShared → Config`, temporarily set `Config.SaveInStudio = true`.
-4. Restart the Studio play session and test saving/loading. Restore `Config.SaveInStudio = false` when finished testing.
+1. Publish the downloaded place as a **separate test experience you own**, rather than testing writes against the original live game's DataStores.
+2. In Roblox Studio, open **Experience Settings / Game Settings → Security** and enable **Studio Access to API Services**. Save the change.
+3. In the `Config` ModuleScript at `ReplicatedStorage → CalmWorksShared → Config`, temporarily set `Config.SaveInStudio = true`.
+4. Start a new play session and verify saving/loading. Return `Config.SaveInStudio` to `false` when testing is finished.
 
-**Allow HTTP Requests / remote server requests:** This exported version uses `HttpService` for JSON encoding/decoding and generating identifiers, **not for outbound HTTP requests** such as `GetAsync`, `PostAsync`, or `RequestAsync`. Therefore, enabling **Allow HTTP Requests** is **not a prerequisite** for the included gameplay. Turn it on only if you add a feature that genuinely makes external HTTP requests.
+**External HTTP / remote server requests:** The exported scripts use `HttpService` for operations such as JSON encoding, decoding, and unique identifiers, but do not call outbound `HttpService:GetAsync`, `PostAsync`, or `RequestAsync` methods. Therefore, **Allow HTTP Requests is not required** for this exported version. Enable it only if a later feature actually makes external HTTP requests.
 
-**AI services:** The game uses Roblox's native `TextGenerator` objects. AI-powered responses may require Roblox-side availability, eligibility, and permissions for the testing experience; enabling HTTP requests does not itself grant those permissions. The game includes curated scenario fallbacks when AI generation is unavailable.
-
-Some Roblox-hosted assets or services may not transfer automatically to another account, and some assets may require separate permissions. Review the rights to imported assets before redistributing them.
+**Native Roblox AI:** AI generation uses Roblox `TextGenerator`, not an external HTTP endpoint. Availability and permissions may depend on the Roblox account and experience. Curated scenarios provide fallbacks when scenario generation is unavailable. Some Roblox-hosted assets, features, or permissions may not transfer automatically to another account.
 
 ## Exported source code
 
-This repository includes the original binary Studio place file (`game/CalmWorks.rbxl`) and **100 separately extracted Luau files** in `src/` (68 ModuleScripts, 16 Scripts, 16 LocalScripts). The `src/` files are a reviewer-friendly mirror of the embedded scripts, preserving their original Studio parent paths; **the `.rbxl` file is the runnable place**, not the `src/` folder by itself. A machine-generated `SOURCE_INVENTORY.json` lists individual paths, types, source sizes, and hashes.
+The repository contains the complete binary Roblox Studio place at **`game/CalmWorks.rbxl`** and **115 extracted Luau source files** under `src/`:
 
-The export currently contains **6,798 serialized Roblox instances**. Script source line count is approximately **26,145** (including empty lines and any imported/third-party scripts). These counts document this particular place export; they do not independently verify behavior in a separate Studio session.
+| Script type | Count |
+| --- | ---: |
+| ModuleScripts | 79 |
+| Scripts | 19 |
+| LocalScripts | 17 |
+| **Total** | **115** |
 
+The latest supplied place export contains **7,255 serialized Roblox instances** and approximately **36,073 source lines**, including blank lines and any Toolbox or backup scripts. The `src/` tree preserves original instance paths for independent source review. The `.rbxl` file is the actual playable Studio place; the extracted source is an inspection-friendly mirror.
+
+**Backup files are included intentionally.** The latest export contains backup scripts in `ServerStorage`, including folders named `ReliabilityFixBackup_20261030_012510` and `MoraleSchedulingBackup_20261030_022532`, as well as an earlier scenario-library backup. They are included in the 115-file total for fidelity and should **not** all be interpreted as active runtime modules.
+
+`SOURCE_INVENTORY.json` records the extracted scripts, their class types, paths, byte counts, source line counts, and SHA-256 hashes, along with the hash of the source place file. These counts verify what was extracted from this specific snapshot; they do **not** independently confirm that every gameplay feature works in a fresh Studio environment.
 
 ## Repository layout
 
@@ -66,19 +77,18 @@ CalmWorks/
 ├── LICENSE
 ├── EXPORT_NOTES.md
 ├── SOURCE_INVENTORY.json
-│
 ├── game/
 │   └── CalmWorks.rbxl
-│
 ├── src/
 │   ├── ReplicatedFirst/
 │   ├── ReplicatedStorage/
 │   ├── ServerScriptService/
 │   ├── ServerStorage/
+│   │   ├── ReliabilityFixBackup_20261030_012510/
+│   │   └── MoraleSchedulingBackup_20261030_022532/
 │   ├── StarterGui/
 │   ├── StarterPlayer/
 │   └── Workspace/
-│
 └── assets/
     ├── CalmWorks_Certification_Gameplay.jpg
     ├── CalmWorks_Certification_Interaction.jpg
@@ -89,75 +99,49 @@ CalmWorks/
     └── VersionHistory_Final_October.png
 ```
 
-**Review note:** This repository mirrors a locally saved Studio file. The publisher should open `game/CalmWorks.rbxl` in Roblox Studio and verify the experience functions before submitting it for independent review; Roblox-hosted assets, permissions, and API features may differ by account.
+**Review note:** The repository is an exported snapshot of a Roblox Studio place. Reviewers should open `game/CalmWorks.rbxl` in Studio and independently test the experience. Native services, asset access, and permissions may vary between Roblox accounts and experiences.
 
 ## Engineering decisions
 
-The game separates player input from authoritative server checks for answers, purchases, rewards, and progression. Scenario generation is prepared in the background; malformed choices or mismatched answer identifiers are rejected, and an approved preset scenario is used when no suitable generated content is available within the brief player-facing loading window. Save operations include validation and compatibility handling for changes between versions.
+CalmWorks validates player answers, purchases, rewards, and progression through authoritative server systems rather than trusting client requests. Scenario generation occurs asynchronously; malformed options, inconsistent answer identifiers, or unsuitable results are rejected in favor of curated fallbacks. The game uses modular systems for adaptive practice, navigation, staffing, progression, and persistence. Save operations include input validation and compatibility handling for older data versions.
 
 ## Development and AI assistance
 
-The creator designed the original concept, educational scenarios, progression mechanics, adaptive-practice requirements, and overall user experience, and wrote, integrated, modified, and tested Luau gameplay systems. OpenAI Codex assisted with aspects of code development, debugging, refactoring, and GUI foundations; ChatGPT assisted with dialogue, and Gemini Flash was used for artwork. Roblox's TextGenerator is an existing AI service, **not** a new model trained for this project.
+The creator designed the original concept, educational scenarios, business progression, adaptive-practice requirements, and user experience, and wrote, integrated, modified, and tested the game's Luau systems. OpenAI Codex assisted with portions of programming, debugging, refactoring, and GUI foundations; ChatGPT assisted with dialogue; and Gemini Flash was used for artwork. Roblox `TextGenerator` is a native existing service, **not** a newly trained machine-learning model created for this project.
 
-## Development and Version History
+## Development and version history
 
-CalmWorks was originally developed in Roblox Studio for the 2026 Congressional App Challenge. Most of the project's development occurred directly within Roblox Studio before this GitHub repository was created.
+CalmWorks was developed primarily in Roblox Studio for the 2026 Congressional App Challenge **before this GitHub repository was created**. Consequently, GitHub commits document the later process of exporting, organizing, publishing, and maintaining the open-source repository rather than the complete original development timeline.
 
-As a result, the GitHub commit history primarily documents the process of exporting, organizing, documenting, and publishing the completed project as open source, rather than its entire development timeline.
+Roblox maintains a separate saved/published version history for the original experience. The screenshots below show that Roblox's Creator Dashboard recorded **530 versions as of October 28, 2026**, with the earliest versions dated **August 4, 2026**. The complete Roblox history remains available to the experience creator through Roblox Studio or Creator Dashboard.
 
-Roblox maintains a separate version history of saved and published versions of the original CalmWorks experience. These earlier versions can be accessed by the creator through Roblox Studio (**Window → Version History**) or the Roblox Creator Dashboard.
-
-The file `game/CalmWorks.rbxl` represents an exported snapshot of the project, while `src/` provides the extracted Luau scripts for independent code inspection.
-
-The original Roblox development history is retained separately from this repository and can be provided as supporting evidence of the project's development process upon request.
-
-### Historical Development Evidence
-
-CalmWorks was originally developed in Roblox Studio before
-this GitHub repository was created.
-
-Roblox's Creator Dashboard records 530 saved versions,
-dating from August 4 to October 28, 2026.
-
-These screenshots document the project's development timeline:
+### Historical development evidence
 
 - [Initial development — August 2026](assets/VersionHistory_Initial_August.png)
 - [Intermediate development — August–September 2026](assets/VersionHistory_September.png)
 - [Continued development — October 2026](assets/VersionHistory_October.png)
-- [Final development — October 2026](assets/VersionHistory_Final_October.png)
+- [Later development — October 2026](assets/VersionHistory_Final_October.png)
 
-The complete version history remains accessible through the
-original CalmWorks experience in Roblox Creator Dashboard.
-
-GitHub commits document the later process of exporting,
-organizing, and publishing CalmWorks as open-source software.
+The `game/CalmWorks.rbxl` file is the latest exported place snapshot in this repository, while `src/` provides a matching source-code mirror. Historical Roblox saves and GitHub publication commits represent **different** development records; no earlier Git commits have been fabricated or backdated.
 
 ## Future work
 
-Potential improvements include structured playtesting, a standardized assessment separate from adaptive practice, more branching conversations, accessibility refinements, and further automated tests.
+Potential improvements include structured user testing, standardized evaluation separate from adaptive practice, more branching conversations, additional accessibility work, and automated tests.
 
-## License and Asset Attribution
+## License and asset attribution
 
-CalmWorks is an educational Roblox experience developed for the 2026 Congressional App Challenge using Roblox Studio and Luau.
+CalmWorks was developed for the 2026 Congressional App Challenge using Roblox Studio and Luau. Its original programming, gameplay systems, educational scenarios, and user interfaces are accompanied by selected publicly available assets from Roblox Studio's Toolbox / Creator Store.
 
-The project consists of original programming, gameplay systems, educational scenarios, user interfaces, and other content developed by the creator, alongside selected publicly available assets obtained through Roblox Studio's Toolbox and Creator Store.
+### Open-source license
 
-### Open-Source License
+The original source code and other original materials owned by the developer are released under the **MIT License**. See [LICENSE](LICENSE) for the complete terms. This license permits use, modification, and redistribution of the covered original software subject to its license conditions.
 
-The original source code and other original materials owned by the developer are released under the MIT License. See the [LICENSE](LICENSE) file for the full terms.
+### Third-party Roblox assets
 
-The MIT License permits others to use, modify, distribute, and build upon the covered original software, provided that the required copyright and license notices are preserved.
+Some models, meshes, textures, audio, scripts, and other assets may come from Roblox Studio's public Toolbox or Creator Store. These assets remain subject to their creators' rights and applicable Roblox terms. **They are not independently relicensed under CalmWorks' MIT License.** Public availability in the Toolbox does not necessarily authorize unrestricted redistribution outside Roblox. Asset-specific terms and attribution requirements must still be respected.
 
-### Third-Party Roblox Assets
+### Development and attribution
 
-Some models, meshes, textures, audio, scripts, and other assets used in CalmWorks may originate from Roblox Studio's public Toolbox or Creator Store.
+CalmWorks' concept, educational design, gameplay integration, and overall project development were directed by the developer. AI-assisted tools, including OpenAI Codex and ChatGPT, were used during aspects of programming, debugging, and content development, with Gemini Flash used for artwork. Certain runtime AI features are powered by Roblox's existing services and APIs.
 
-These third-party assets remain the property of their respective creators and are subject to their original licensing conditions and applicable Roblox terms. They are not independently relicensed under CalmWorks' MIT License.
-
-Public availability through Roblox Studio does not necessarily grant permission for unrestricted redistribution outside the Roblox platform. Any third-party assets included in this repository must be used and redistributed in accordance with their applicable permissions.
-
-### Development and Attribution
-
-CalmWorks' concept, educational design, gameplay integration, and project development were directed by Vrishank Yarra. AI-assisted tools, including OpenAI Codex and ChatGPT, were used during aspects of programming, debugging, and content development. Existing Roblox services and APIs are used for selected AI-powered features.
-
-The project is available for educational exploration, source-code inspection, and further development in accordance with the applicable licenses and permissions.
+The original materials are available for educational exploration, source inspection, and further development under the applicable licenses and permissions.
