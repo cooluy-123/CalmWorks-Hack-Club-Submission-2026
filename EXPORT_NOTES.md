@@ -1,8 +1,8 @@
 # Export notes and upload instructions
 
-- **Original input:** `CalmWorks1.rbxl` (uploaded by project creator).
+- **Original input:** Latest creator-provided `CalmWorks.rbxl` snapshot (October 2026).
 - **Included complete place:** `game/CalmWorks.rbxl`. This is the original binary place; do not change `.rbxl` to `.rbxlx` by renaming it.
-- **Extracted source:** `src/` contains every of the 100 instances with a `Source` property found in that place export: 68 ModuleScripts, 16 Scripts, 16 LocalScripts.
+- **Extracted source:** `src/` contains all 115 script instances with a `Source` property found in this place export: 79 ModuleScripts, 19 Scripts, and 17 LocalScripts (including retained backup scripts).
 - **Method:** read Roblox binary `INST`, `PROP`, and `PRNT` chunks, decode ZSTD/LZ4 chunks, preserve literal `Source` bytes, and reconstruct parent paths and names. Duplicate object paths have a unique referent suffix. The extracted scripts are documentation/source browsing files; the full place is what you open in Roblox Studio.
 - **Inventory:** `SOURCE_INVENTORY.json` lists each extracted script's path, type, byte size, line count, and SHA-256, and the SHA-256 of the input place.
 - **Testing:** This extraction confirms the place file was structurally parsable, **not** that every feature will work in a fresh Roblox Studio environment. Open the actual place from this repository and test before certification submission.
@@ -18,10 +18,14 @@
 - **External HTTP requests:** The exported Luau source uses `HttpService` for JSON and GUID operations, but it does not call outbound HTTP request methods; **Allow HTTP Requests** is not required for this version of CalmWorks. Roblox `TextGenerator` availability/permissions are separate from this setting; curated scenario fallbacks are included.
 - **Limitations:** Some Roblox-hosted assets, permissions, live save data, and native AI capabilities may not transfer to another account.
 
+## Updating the repository
+
+The playable place, its extracted scripts, and `SOURCE_INVENTORY.json` must be updated together when the Studio export changes. The full place contains 7,255 serialized instances in this snapshot. Earlier GitHub history reflects open-source publication and later maintenance, not the original Roblox Studio development timeline.
+
 ## To publish
 
-1. Unzip this archive into a normal folder on your computer (do **not** upload the zip itself as a GitHub source repository).
-2. Read and review this README and license, inspect imported asset rights, and run `game/CalmWorks.rbxl` in Roblox Studio.
-3. Open your GitHub repository and choose **Add file > Upload files**, then drag in the contents of the extracted project folder. (The `.rbxl` file is under GitHub's standard web upload size limit.)
-4. Add and commit real changes in clear steps; if you're adding everything together, use `Add Roblox place export and extracted Luau sources`.
+1. Download the repository or a source archive into a normal folder on your computer (do **not** replace the public source repository with a ZIP alone).
+2. Read and review `README.md` and `LICENSE`, inspect imported asset rights, and run `game/CalmWorks.rbxl` in Roblox Studio.
+3. When refreshing an export, replace `game/CalmWorks.rbxl`, its matching files under `src/`, and `SOURCE_INVENTORY.json` in the GitHub repository. Check that the source inventory matches the new binary.
+4. Commit authentic changes with a description of the new export or documentation. Do not create or backdate commits to simulate earlier work.
 5. Check public repo in a signed-out browser window and enter its URL in the certificate application.
