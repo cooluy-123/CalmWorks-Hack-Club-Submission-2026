@@ -54,18 +54,18 @@ To **test persistent saving and loading in Studio**:
 
 ## Exported source code
 
-The repository contains the complete binary Roblox Studio place at **`game/CalmWorks.rbxl`** and **115 extracted Luau source files** under `src/`:
+The repository contains the complete binary Roblox Studio place at **`game/CalmWorks.rbxl`** and **92 extracted Luau source files** under `src/`:
 
 | Script type | Count |
 | --- | ---: |
-| ModuleScripts | 79 |
-| Scripts | 19 |
-| LocalScripts | 17 |
-| **Total** | **115** |
+| ModuleScripts | 67 |
+| Scripts | 10 |
+| LocalScripts | 15 |
+| **Total** | **92** |
 
-The latest supplied place export contains **7,255 serialized Roblox instances** and approximately **36,073 source lines**, including blank lines and any Toolbox or backup scripts. The `src/` tree preserves original instance paths for independent source review. The `.rbxl` file is the actual playable Studio place; the extracted source is an inspection-friendly mirror.
+The latest supplied place export contains **6,646 serialized Roblox instances** and approximately **26,045 source lines**, including blank lines and any Toolbox or backup scripts. The `src/` tree preserves original instance paths for independent source review. The `.rbxl` file is the actual playable Studio place; the extracted source is an inspection-friendly mirror.
 
-**Backup files are included intentionally.** The latest export contains backup scripts in `ServerStorage`, including folders named `ReliabilityFixBackup_20261030_012510` and `MoraleSchedulingBackup_20261030_022532`, as well as an earlier scenario-library backup. They are included in the 115-file total for fidelity and should **not** all be interpreted as active runtime modules.
+**Clean export:** This place snapshot excludes the earlier `EpicCowCar` model and the two retained backup folders. The remaining extracted scripts match their corresponding source in the previous export exactly.
 
 `SOURCE_INVENTORY.json` records the extracted scripts, their class types, paths, byte counts, source line counts, and SHA-256 hashes, along with the hash of the source place file. These counts verify what was extracted from this specific snapshot; they do **not** independently confirm that every gameplay feature works in a fresh Studio environment.
 
@@ -84,8 +84,6 @@ CalmWorks/
 │   ├── ReplicatedStorage/
 │   ├── ServerScriptService/
 │   ├── ServerStorage/
-│   │   ├── ReliabilityFixBackup_20261030_012510/
-│   │   └── MoraleSchedulingBackup_20261030_022532/
 │   ├── StarterGui/
 │   ├── StarterPlayer/
 │   └── Workspace/
